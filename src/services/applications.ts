@@ -2,11 +2,13 @@ import { applicationsRepo } from "../repos/applications.js";
 import { numbering } from "./numbering.js";
 import { writeAudit } from "./audit.js";
 import { COMPANY_DEFAULTS } from "../constants/company.js";
-import { settingsRepo } from "../repos/ops.js";
+import { fxRepo, settingsRepo } from "../repos/ops.js";
 import { HttpError } from "../lib/http.js";
 import { normalizeStatus } from "../constants/status.js";
 import type { AuthUser } from "../middleware/auth.js";
 import { seesAllCountries } from "../lib/roles.js";
+import { computeTotals, countryMatches, destIsNepalBhutan, isIndiaPort, resolveDocumentYear } from "../lib/export-rules.js";
+import { mastersRepo } from "../repos/masters.js";
 
 export function countryFilter(user: AuthUser) {
   if (seesAllCountries(user.role, user.countries)) return {};
@@ -19,16 +21,6 @@ export function countryFilter(user: AuthUser) {
       { country_id: { $in: user.countries } },
     ],
   };
-}
-
-function totals(body: any) {
-  const items = body.items ?? [];
-  const total_amount =
-    items.reduce((s: number, it: any) => s + (Number(it.amount) || 0), 0) + (Number(body.loading_charge) || 0);
-  const total_packages = items.reduce((s: number, it: any) => s + (Number(it.packages) || 0), 0);
-  const total_net_weight = items.reduce((s: number, it: any) => s + (Number(it.net_weight) || 0), 0);
-  const total_gross_weight = items.reduce((s: number, it: any) => s + (Number(it.gross_weight) || 0), 0);
-  return { total_amount, total_packages, total_net_weight, total_gross_weight };
 }
 
 function snapshots(body: any) {
@@ -65,21 +57,48 @@ function snapshots(body: any) {
   return { customer_snapshot, supplier_snapshot, bank_snapshot, meta };
 }
 
+async function applyPorts(body: any) {
+  const ports = (await mastersRepo.list("ports")) ?? [];
+  const loading = ports.find((p: any) => p.name === body.port_loading_text);
+  const discharge = ports.find((p: any) => p.name === body.port_discharge_text);
+  if (body.port_loading_text && loading && !isIndiaPort(loading.country)) {
+    throw new HttpError(422, "Port of loading must be in India", "VALIDATION_ERROR", { port_loading_text: "Must be an India port" });
+  }
+  if (body.port_discharge_text && discharge && body.final_destination_text && !countryMatches(discharge.country, body.final_destination_text)) {
+    throw new HttpError(422, "Port of discharge must match the destination country", "VALIDATION_ERROR", {
+      port_discharge_text: "Country does not match destination",
+    });
+  }
+  return {
+    port_loading_address: loading?.address || body.port_loading_address || "",
+    port_discharge_address: discharge?.address || body.port_discharge_address || "",
+  };
+}
+
+function syncDoe(body: any) {
+  const vgm_date = body.vgm_date || body.examination_date || "";
+  return { vgm_date, examination_date: vgm_date };
+}
+
 export const applicationService = {
   countryFilter,
 
   async create(user: AuthUser, body: any, ip?: string) {
     const company = await settingsRepo.get();
+    const fx = await fxRepo.latest();
     const app_no = await numbering.application();
-    const invoice_no = body.invoice_no?.trim() ? body.invoice_no : await numbering.invoice();
-    const year = new Date().getFullYear();
+    const year = await resolveDocumentYear();
+    const portPatch = await applyPorts(body);
+    const doe = syncDoe(body);
     const created = await applicationsRepo.create({
       ...body,
-      ...totals(body),
+      ...computeTotals({ ...body, exchange_rate: body.exchange_rate ?? fx?.usd_inr }),
       ...snapshots(body),
+      ...portPatch,
+      ...doe,
       app_no,
-      invoice_no,
-      financial_year: `${year}-${year + 1}`,
+      financial_year: year,
+      exchange_rate: body.exchange_rate ?? fx?.usd_inr ?? null,
       status: "DRAFT",
       current_stage: "created",
       created_by: user.id,
@@ -94,7 +113,7 @@ export const applicationService = {
       state_of_origin: body.state_of_origin || COMPANY_DEFAULTS.stateOfOrigin,
       declaration: body.declaration || COMPANY_DEFAULTS.declaration,
       rodtep_text: body.rodtep_text || COMPANY_DEFAULTS.rodtepText,
-      igst_bond_text: body.igst_bond_text || COMPANY_DEFAULTS.igstBondText,
+      igst_bond_text: destIsNepalBhutan(body.final_destination_text) ? "" : body.igst_bond_text || COMPANY_DEFAULTS.igstBondText,
     });
     await writeAudit({
       user,
@@ -118,10 +137,22 @@ export const applicationService = {
     if (body.version != null && existing.version != null && Number(body.version) !== Number(existing.version)) {
       throw new HttpError(409, "This application was updated by someone else. Reload and try again.", "CONFLICT");
     }
+    const portPatch = await applyPorts({ ...existing, ...body });
+    const doe = syncDoe({ ...existing, ...body });
+    if (destIsNepalBhutan(body.final_destination_text || existing.final_destination_text)) {
+      const bills = body.gst_bills ?? existing.gst_bills ?? [];
+      const missing = bills.filter((b: any) => (b.bill_no || b.company_name) && !String(b.gst_no || "").trim());
+      if (missing.length) {
+        throw new HttpError(422, "GST number is required on purchase bills for Nepal/Bhutan", "VALIDATION_ERROR");
+      }
+    }
     const patch = {
       ...body,
-      ...totals(body),
+      ...computeTotals({ ...existing, ...body }),
       ...snapshots(body),
+      ...portPatch,
+      ...doe,
+      financial_year: existing.financial_year,
       version: Number(existing.version || 1) + 1,
       app_no: existing.app_no,
     };

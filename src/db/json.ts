@@ -27,6 +27,7 @@ function empty(): DB {
     counters: [],
     settings: [],
     billing: [],
+    fx_rates: [],
   };
 }
 

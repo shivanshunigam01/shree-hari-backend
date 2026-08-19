@@ -13,7 +13,7 @@ export async function connectDb() {
     return;
   }
   try {
-    await mongoose.connect(env.mongoUri, { serverSelectionTimeoutMS: 2000 });
+    await mongoose.connect(env.mongoUri, { serverSelectionTimeoutMS: 15000 });
     dbMode = "mongo";
     console.log("MongoDB connected:", env.mongoUri);
     return;

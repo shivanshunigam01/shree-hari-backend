@@ -1,5 +1,5 @@
 import { dbMode } from "../config/db.js";
-import { AuditLog, ApprovalHistory, AppDocument, Counter, CompanySettings, BillingRecord } from "../models/AuditLog.js";
+import { AuditLog, ApprovalHistory, AppDocument, Counter, CompanySettings, BillingRecord, FxRate } from "../models/AuditLog.js";
 import { jsonDb, serializeRow } from "../db/json.js";
 import { serialize, serializeMany } from "../lib/serialize.js";
 import { COMPANY_DEFAULTS } from "../constants/company.js";
@@ -88,10 +88,10 @@ export const settingsRepo = {
   async get() {
     if (dbMode === "mongo") {
       const row = await CompanySettings.findOne({ key: "company" });
-      return (row?.value as Record<string, unknown>) || { ...COMPANY_DEFAULTS };
+      return { ...COMPANY_DEFAULTS, ...((row?.value as Record<string, unknown>) || {}) };
     }
     const row = jsonDb.findOne("settings", { key: "company" });
-    return (row?.value as Record<string, unknown>) || { ...COMPANY_DEFAULTS };
+    return { ...COMPANY_DEFAULTS, ...((row?.value as Record<string, unknown>) || {}) };
   },
   async save(value: Record<string, unknown>) {
     const merged = { ...COMPANY_DEFAULTS, ...value };
@@ -129,5 +129,27 @@ export const billingRepo = {
     }
     const row = jsonDb.updateById("billing", id, patch);
     return row ? serializeRow(row) : null;
+  },
+};
+
+export const fxRepo = {
+  async list() {
+    if (dbMode === "mongo") return serializeMany(await FxRate.find().sort({ week_start: -1, created_at: -1 }).limit(52));
+    return jsonDb.find("fx_rates").map(serializeRow);
+  },
+  async create(doc: Record<string, unknown>) {
+    if (dbMode === "mongo") return serialize(await FxRate.create(doc));
+    return serializeRow(jsonDb.insert("fx_rates", doc));
+  },
+  async latest() {
+    if (dbMode === "mongo") {
+      const row = await FxRate.findOne().sort({ week_start: -1, created_at: -1 });
+      return row ? serialize(row) : null;
+    }
+    const rows = jsonDb
+      .find("fx_rates")
+      .slice()
+      .sort((a, b) => String(b.week_start || "").localeCompare(String(a.week_start || "")));
+    return rows[0] ? serializeRow(rows[0]) : null;
   },
 };

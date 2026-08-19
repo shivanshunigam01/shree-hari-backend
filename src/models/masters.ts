@@ -29,6 +29,7 @@ export const Product = modelOf("Product", {
   description: String,
   dimensions: String,
   image_url: String,
+  brand_name: String,
   origin_country: { type: String, default: "INDIA" },
   ...soft,
 });
@@ -44,6 +45,7 @@ export const Port = modelOf("Port", {
   code: String,
   port_type: String,
   country: String,
+  address: String,
   ...soft,
 });
 

@@ -8,6 +8,7 @@
     "start": "tsx src/index.ts",
     "seed": "tsx src/seed/index.ts",
     "seed:admin": "tsx src/seed/reset-admin.ts",
+    "seed:demo": "tsx src/seed/demo-pack.ts",
     "test": "vitest run",
     "build": "tsc --noEmit"
   },

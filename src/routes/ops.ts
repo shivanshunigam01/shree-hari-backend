@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authJwt, requirePermission, type AuthedRequest } from "../middleware/auth.js";
 import { applicationsRepo } from "../repos/applications.js";
 import { countryFilter } from "../services/applications.js";
-import { auditRepo, documentsRepo, settingsRepo, billingRepo } from "../repos/ops.js";
+import { auditRepo, documentsRepo, settingsRepo, billingRepo, fxRepo } from "../repos/ops.js";
 import { numbering } from "../services/numbering.js";
 import { fail, ok } from "../lib/http.js";
 import { normalizeStatus } from "../constants/status.js";
@@ -168,4 +168,27 @@ billingRouter.patch("/:id", requirePermission("billing.edit"), async (req, res) 
   const row = await billingRepo.update(req.params.id, req.body ?? {});
   if (!row) return fail(res, 404, "Not found", "NOT_FOUND");
   return ok(res, row);
+});
+
+export const fxRouter = Router();
+fxRouter.use(authJwt);
+fxRouter.get("/", requirePermission("fx.manage", "applications.view"), async (_req, res) => {
+  const items = await fxRepo.list();
+  const latest = await fxRepo.latest();
+  return ok(res, { items, latest });
+});
+fxRouter.post("/", requirePermission("fx.manage"), async (req: AuthedRequest, res) => {
+  const usd_inr = Number(req.body?.usd_inr);
+  const week_start = String(req.body?.week_start || new Date().toISOString().slice(0, 10));
+  if (!usd_inr || usd_inr <= 0) return fail(res, 400, "usd_inr rate is required", "VALIDATION_ERROR");
+  const row = await fxRepo.create({
+    week_start,
+    usd_inr,
+    pairs: req.body?.pairs || { USD_INR: usd_inr },
+    note: req.body?.note || "",
+    created_by: req.user!.id,
+    created_by_name: req.user!.name,
+    active: true,
+  });
+  return ok(res, row, "Exchange rate saved", 201);
 });

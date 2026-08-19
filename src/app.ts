@@ -18,6 +18,7 @@ import {
   documentsPublicRouter,
   uploadsRouter,
   billingRouter,
+  fxRouter,
 } from "./routes/ops.js";
 import { errorHandler, notFound } from "./middleware/auth.js";
 import { ok } from "./lib/http.js";
@@ -76,6 +77,7 @@ export function createApp() {
   app.use("/api/documents", documentsPublicRouter);
   app.use("/api/uploads", uploadsRouter);
   app.use("/api/billing", billingRouter);
+  app.use("/api/fx-rates", fxRouter);
 
   app.use(notFound);
   app.use(errorHandler);

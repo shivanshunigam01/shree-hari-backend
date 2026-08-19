@@ -9,8 +9,8 @@ import { storage } from "../services/storage.js";
 export const mastersRouter = Router();
 mastersRouter.use(authJwt);
 
-function tableParam(req: { params: { table: string } }) {
-  return mastersRepo.normalizeTable(req.params.table);
+function tableParam(req: { params: Record<string, string | string[] | undefined> }) {
+  return mastersRepo.normalizeTable(String(req.params.table || ""));
 }
 
 mastersRouter.get("/:table", requirePermission("masters.view"), async (req, res) => {

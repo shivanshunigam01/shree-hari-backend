@@ -35,7 +35,8 @@ export async function seedIfEmpty() {
       { name: "UAE", code: "AE", is_demo: true },
       { name: "United Kingdom", code: "GB", is_demo: true },
       { name: "USA", code: "US", is_demo: true },
-      { name: "Ethiopia", code: "ET", is_demo: true },
+      { name: "Nepal", code: "NP", is_demo: true },
+      { name: "Bhutan", code: "BT", is_demo: true },
     ]) {
       await mastersRepo.create("countries", row);
     }
@@ -102,8 +103,10 @@ export async function seedIfEmpty() {
 
   const ports = (await mastersRepo.list("ports")) ?? [];
   if (!ports.length) {
-    await mastersRepo.create("ports", { name: "KANDLA", code: "INIXY", port_type: "sea", country: "India", is_demo: true });
-    await mastersRepo.create("ports", { name: "MUNDRA", code: "INMUN", port_type: "sea", country: "India", is_demo: true });
+    await mastersRepo.create("ports", { name: "KANDLA", code: "INIXY", port_type: "sea", country: "India", address: "Kandla Port, Kutch, Gujarat, India", is_demo: true });
+    await mastersRepo.create("ports", { name: "MUNDRA", code: "INMUN", port_type: "sea", country: "India", address: "Mundra Port, Kutch, Gujarat, India", is_demo: true });
+    await mastersRepo.create("ports", { name: "RAXAUL", code: "INRXL", port_type: "land", country: "India", address: "Raxaul LCS, Bihar, India", is_demo: true });
+    await mastersRepo.create("ports", { name: "BIRGUNJ", code: "NPBIR", port_type: "land", country: "Nepal", address: "Birgunj ICD, Nepal", is_demo: true });
     await mastersRepo.create("ports", { name: "DJIBOUTI SEA PORT", code: "DJJIB", port_type: "sea", country: "Djibouti", is_demo: true });
     await mastersRepo.create("ports", { name: "Jebel Ali", code: "AEJEA", port_type: "sea", country: "UAE", is_demo: true });
   }
@@ -138,6 +141,11 @@ export async function seedIfEmpty() {
   }
 
   await settingsRepo.save({ ...COMPANY_DEFAULTS, ...(await settingsRepo.get()) });
+
+  if (process.env.FORCE_JSON_DB !== "1") {
+    const { seedDemoPack } = await import("./demo-pack.js");
+    await seedDemoPack();
+  }
 }
 
 if (process.argv[1]?.includes("seed")) {

@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import PDFDocument from "pdfkit";
 import { COMPANY_DEFAULTS } from "../../constants/company.js";
+import { indianMoneyWords } from "../../lib/export-rules.js";
 import { settingsRepo } from "../../repos/ops.js";
 import { storage } from "../storage.js";
 
@@ -69,6 +70,7 @@ const FLAG_MAP: Record<string, string> = {
   ethiopia: "et",
   guinea: "gn",
   nepal: "np",
+  bhutan: "bt",
   uzbekistan: "uz",
   france: "fr",
   zambia: "zm",
@@ -110,8 +112,8 @@ export async function drawLetterhead(doc: PDFKit.PDFDocument, company: Record<st
 
   if (hasFile(letterhead)) {
     try {
-      doc.image(letterhead, m, y, { width: pageW - m * 2 - 10, height: 52 });
-      y += 56;
+      doc.image(letterhead, m, y, { width: pageW - m * 2 - 10, height: 48 });
+      y += 50;
     } catch {
       /* fall through */
     }
@@ -123,24 +125,38 @@ export async function drawLetterhead(doc: PDFKit.PDFDocument, company: Record<st
         /* ignore */
       }
     }
-    doc.fillColor(COLORS.blue).font("Times-Bold").fontSize(18).text(String(company.companyName || "SHREE HARI"), m + 50, y, { width: 220 });
-    doc.fillColor("#222").font("Helvetica").fontSize(8).text("EXPORT HOUSE", m + 50, y + 20, { characterSpacing: 2, width: 220 });
-    doc.font("Helvetica").fontSize(7).fillColor("#222").text(`Corporate Office : ${company.letterheadAddress || COMPANY_DEFAULTS.letterheadAddress}`, pageW - m - 260, y, { width: 250, align: "left" });
-    doc.text(`E-mail : ${(company.emails || COMPANY_DEFAULTS.emails).join(", ")}`, pageW - m - 260, y + 22, { width: 250 });
-    doc.text(`Web : ${company.website || COMPANY_DEFAULTS.website}   Ph.: ${company.phone || COMPANY_DEFAULTS.phone}`, pageW - m - 260, y + 32, { width: 250 });
-    y += 50;
+    doc.fillColor(COLORS.blue).font("Times-Bold").fontSize(16).text(String(company.companyName || "SHREE HARI EXPORT HOUSE"), m + 50, y, { width: 280 });
+    y += 22;
   }
+
+  const address = String(company.exporterAddress || company.letterheadAddress || COMPANY_DEFAULTS.exporterAddress);
+  doc.fillColor("#222").font("Helvetica").fontSize(7).text(address, m, y, { width: pageW - m * 2 - 80 });
+  y += Math.max(22, doc.heightOfString(address, { width: pageW - m * 2 - 80 }) + 4);
+  doc.font("Helvetica").fontSize(7).text(`E-mail : ${(company.emails || COMPANY_DEFAULTS.emails).join(", ")}   Web : ${company.website || COMPANY_DEFAULTS.website}   Ph.: ${company.phone || COMPANY_DEFAULTS.phone}`, m, y, { width: pageW - m * 2 });
+  y += 12;
 
   doc.save();
   doc.rect(pageW - 10, 16, 6, 54).fill(COLORS.orange);
   doc.restore();
 
+  doc.moveTo(m, y).lineTo(pageW - m, y).strokeColor(COLORS.blue).lineWidth(1.2).stroke();
+  doc.strokeColor(COLORS.line).lineWidth(0.4);
+  return y + 8;
+}
+
+export async function drawFooter(doc: PDFKit.PDFDocument, dest?: string) {
+  const pageW = doc.page.width;
+  const pageH = doc.page.height;
+  const m = 22;
+  const y = pageH - 58;
+  doc.moveTo(m, y).lineTo(pageW - m, y).strokeColor(COLORS.blue).lineWidth(0.8).stroke();
+  await drawSeal(doc, m, y + 4, 70);
   const inFlag = await loadFlag("India");
   const destFlag = await loadFlag(dest);
-  let fx = pageW - m - 70;
+  let fx = pageW - m - 36;
   if (destFlag) {
     try {
-      doc.image(destFlag, fx, y, { width: 28, height: 18 });
+      doc.image(destFlag, fx, y + 8, { width: 28, height: 18 });
       fx -= 34;
     } catch {
       /* ignore */
@@ -148,15 +164,20 @@ export async function drawLetterhead(doc: PDFKit.PDFDocument, company: Record<st
   }
   if (inFlag) {
     try {
-      doc.image(inFlag, fx, y, { width: 28, height: 18 });
+      doc.image(inFlag, fx, y + 8, { width: 28, height: 18 });
     } catch {
       /* ignore */
     }
   }
-  y += 8;
-  doc.moveTo(m, y).lineTo(pageW - m, y).strokeColor(COLORS.blue).lineWidth(1.2).stroke();
-  doc.strokeColor(COLORS.line).lineWidth(0.4);
-  return y + 6;
+  doc.font("Helvetica").fontSize(6).fillColor("#555").text("Shree Hari Export House", m + 78, y + 18);
+}
+
+export function attachFooter(doc: PDFKit.PDFDocument, dest?: string) {
+  const run = () => {
+    void drawFooter(doc, dest);
+  };
+  doc.on("pageAdded", run);
+  void drawFooter(doc, dest);
 }
 
 export async function drawSeal(doc: PDFKit.PDFDocument, x: number, y: number, w = 110) {
@@ -185,6 +206,7 @@ export function kv(doc: PDFKit.PDFDocument, x: number, y: number, label: string,
 }
 
 export function moneyWords(n: number, currency = "USD") {
+  if (currency === "INR") return indianMoneyWords(n);
   if (!n) return "";
   const ones = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN"];
   const tens = ["", "", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY"];

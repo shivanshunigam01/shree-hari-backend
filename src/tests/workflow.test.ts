@@ -109,6 +109,39 @@ describe("applications workflow", () => {
   });
 });
 
+describe("export pack rules", () => {
+  it("stamps financial year on create", async () => {
+    const res = await request(app)
+      .post("/api/applications")
+      .set("Authorization", `Bearer ${staffToken}`)
+      .send({
+        consignee_name: "FY Buyer",
+        final_destination_text: "USA",
+        items: [{ description: "PAN", quantity: 1, unit: "PCS", rate: 1, amount: 1 }],
+      });
+    expect(res.status).toBe(201);
+    expect(res.body.data.financial_year).toBeTruthy();
+    expect(res.body.data.invoice_no).toBeFalsy();
+  });
+
+  it("admin can save weekly FX rate", async () => {
+    const res = await request(app)
+      .post("/api/fx-rates")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ week_start: "2026-04-06", usd_inr: 86.5, note: "test week" });
+    expect(res.status).toBe(201);
+    expect(res.body.data.usd_inr).toBe(86.5);
+  });
+
+  it("blocks packing list until payment and INR invoice", async () => {
+    const res = await request(app)
+      .post(`/api/applications/${appId}/documents/generate`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ type: "packing_list" });
+    expect(res.status).toBe(409);
+  });
+});
+
 describe("documents", () => {
   it("rejects invalid file type", async () => {
     const res = await request(app)

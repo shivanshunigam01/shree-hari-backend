@@ -1,20 +1,32 @@
-import { applicationsRepo } from "../repos/applications.js";
 import { countersRepo } from "../repos/ops.js";
+import { applicationsRepo } from "../repos/applications.js";
+import { resolveDocumentYear } from "../lib/export-rules.js";
 
 export const numbering = {
+  async year() {
+    return resolveDocumentYear();
+  },
   async application() {
     return applicationsRepo.nextAppNo();
   },
   async invoice() {
-    const n = await countersRepo.next("EXP");
-    return `EXP ${n}`;
+    const year = await resolveDocumentYear();
+    const n = await countersRepo.next(`EXP:${year}`);
+    return `EXP ${n}/${year}`;
   },
   async proforma() {
-    const n = await countersRepo.next("PI");
-    return `PI-${String(n).padStart(4, "0")}`;
+    const year = await resolveDocumentYear();
+    const n = await countersRepo.next(`PI:${year}`);
+    return `PI-${year}-${String(n).padStart(4, "0")}`;
+  },
+  async inrInvoice() {
+    const year = await resolveDocumentYear();
+    const n = await countersRepo.next(`INR:${year}`);
+    return `INR ${n}/${year}`;
   },
   async billing() {
-    const n = await countersRepo.next("BILL");
-    return `BL-${String(n).padStart(4, "0")}`;
+    const year = await resolveDocumentYear();
+    const n = await countersRepo.next(`BILL:${year}`);
+    return `BL-${year}-${String(n).padStart(4, "0")}`;
   },
 };

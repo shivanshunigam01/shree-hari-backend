@@ -12,6 +12,7 @@ export const COMPANY_DEFAULTS = {
   bin: "ADSFS7838P1ZX FT 001",
   lutNo: "AD2403250559720 24/03/2025",
   stateOfOrigin: "GUJARAT",
+  documentYear: "",
   authorisedSignatory: "K. V. Patel",
   authorisedDesignation: "Partner",
   vgmOfficial: "MR. KISHORBHAI",

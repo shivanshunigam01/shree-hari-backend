@@ -27,9 +27,13 @@ async function transition(opts: {
     throw new HttpError(409, `Cannot change status from ${from} to ${opts.to}`, "CONFLICT");
   }
   const patch: Record<string, unknown> = { status: opts.to, ...opts.extra };
-  if (opts.to === "APPROVED") patch.current_stage = "invoice";
-  if (opts.to === "IN_PROGRESS") patch.current_stage = "packing";
-  if (opts.to === "READY_FOR_DISPATCH") patch.current_stage = "customs";
+  if (opts.to === "APPROVED") patch.current_stage = "pi";
+  if (opts.to === "IN_PROGRESS") {
+    if (app.payment_received && app.inr_invoice_no) patch.current_stage = "packing_stuffing";
+    else if (app.invoice_no) patch.current_stage = "commercial_invoice";
+    else patch.current_stage = "pi";
+  }
+  if (opts.to === "READY_FOR_DISPATCH") patch.current_stage = "vgm_annexure";
   if (opts.to === "DISPATCHED") patch.current_stage = "dispatch";
   if (opts.to === "COMPLETED") patch.current_stage = "completed";
   const updated = await applicationsRepo.update(opts.id, patch);

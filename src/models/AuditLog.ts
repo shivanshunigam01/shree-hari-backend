@@ -99,3 +99,19 @@ const billingSchema = new Schema(
 );
 
 export const BillingRecord = mongoose.models.BillingRecord || mongoose.model("BillingRecord", billingSchema);
+
+const fxSchema = new Schema(
+  {
+    week_start: { type: String, required: true },
+    usd_inr: { type: Number, required: true },
+    pairs: { type: Schema.Types.Mixed, default: {} },
+    note: String,
+    created_by: String,
+    created_by_name: String,
+    active: { type: Boolean, default: true },
+  },
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } },
+);
+fxSchema.index({ week_start: -1 });
+
+export const FxRate = mongoose.models.FxRate || mongoose.model("FxRate", fxSchema);
