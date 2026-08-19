@@ -1,0 +1,33 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Shreehari Export House EAMS API",
+    "version": "1.0.0",
+    "description": "Internal ERP API for export applications, approvals, masters and documents."
+  },
+  "servers": [{ "url": "/api" }],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    }
+  },
+  "security": [{ "bearerAuth": [] }],
+  "paths": {
+    "/health": { "get": { "security": [], "summary": "Health", "responses": { "200": { "description": "ok" } } } },
+    "/auth/login": { "post": { "security": [], "summary": "Login", "responses": { "200": { "description": "token + user" } } } },
+    "/auth/me": { "get": { "summary": "Current user" } },
+    "/auth/logout": { "post": { "summary": "Logout" } },
+    "/users": { "get": { "summary": "List staff" }, "post": { "summary": "Create staff" } },
+    "/applications": { "get": { "summary": "List applications" }, "post": { "summary": "Create application" } },
+    "/applications/{id}/submit": { "post": { "summary": "Submit" } },
+    "/applications/{id}/approve": { "post": { "summary": "Approve" } },
+    "/applications/{id}/reject": { "post": { "summary": "Reject" } },
+    "/applications/{id}/request-changes": { "post": { "summary": "Request changes" } },
+    "/applications/{id}/documents/generate": { "post": { "summary": "Generate Invoice / Packing / Annexure / VGM / Proforma PDF" } },
+    "/masters/{table}": { "get": { "summary": "List master rows" } },
+    "/notifications": { "get": { "summary": "Inbox" } },
+    "/dashboard/summary": { "get": { "summary": "Dashboard counts" } },
+    "/audit-logs": { "get": { "summary": "Audit log" } },
+    "/reports/applications": { "get": { "summary": "Applications report" } }
+  }
+}

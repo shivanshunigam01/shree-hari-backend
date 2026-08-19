@@ -1,0 +1,8 @@
+backend/data
+node_modules
+dist
+.env
+*.log
+uploads
+backend/uploads
+

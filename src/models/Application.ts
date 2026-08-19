@@ -1,0 +1,195 @@
+import mongoose, { Schema } from "mongoose";
+
+const containerSchema = new Schema(
+  {
+    container_no: String,
+    line_seal_no: String,
+    electronic_seal_no: String,
+    size: String,
+    quantity: String,
+    packages: Number,
+    net_weight: Number,
+    gross_weight: Number,
+    tare_weight: Number,
+    csc_max_weight: Number,
+    vgm_weight: Number,
+    vgm_method: String,
+    container_type: { type: String, default: "NORMAL" },
+    seq: Number,
+  },
+  { _id: true },
+);
+
+const itemSchema = new Schema(
+  {
+    product_id: String,
+    packages: Number,
+    description: String,
+    dimensions: String,
+    hsn_code: String,
+    quantity: Number,
+    unit: String,
+    rate: Number,
+    amount: Number,
+    net_weight: Number,
+    gross_weight: Number,
+    origin_country: String,
+    image_url: String,
+    seq: Number,
+    container_id: String,
+  },
+  { _id: true },
+);
+
+const packingLineSchema = new Schema(
+  {
+    serial_no: String,
+    description: String,
+    pcs: Number,
+    per_pcs_net: Number,
+    per_pcs_gross: Number,
+    net_weight: Number,
+    gross_weight: Number,
+    seq: Number,
+  },
+  { _id: true },
+);
+
+const gstBillSchema = new Schema(
+  {
+    bill_no: String,
+    bill_date: String,
+    company_name: String,
+    gst_no: String,
+  },
+  { _id: false },
+);
+
+const stageSchema = new Schema(
+  {
+    stage_key: String,
+    stage_label: String,
+    status: { type: String, default: "pending" },
+    comment: String,
+    acted_at: Date,
+    completed_by: String,
+    notes: String,
+    seq: Number,
+  },
+  { _id: true },
+);
+
+const applicationSchema = new Schema(
+  {
+    app_no: { type: String, unique: true, required: true },
+    invoice_no: String,
+    proforma_no: String,
+    financial_year: String,
+    status: { type: String, default: "DRAFT" },
+    current_stage: { type: String, default: "created" },
+    country_id: String,
+    assigned_to: String,
+    version: { type: Number, default: 1 },
+    exporter_name: String,
+    exporter_address: String,
+    iec_no: String,
+    gst_no: String,
+    bin_no: String,
+    aeo_no: String,
+    state_of_origin: String,
+    lut_no: String,
+    invoice_date: String,
+    invoice_currency: { type: String, default: "USD" },
+    exchange_rate: Number,
+    consignee_name: String,
+    consignee_address: String,
+    consignee_phone: String,
+    consignee_email: String,
+    consignee_tax_id: String,
+    customer_id: String,
+    notify_party: String,
+    second_notify: String,
+    third_party: String,
+    supplier_id: String,
+    supplier_name: String,
+    supplier_address: String,
+    supplier_gst: String,
+    factory_address: String,
+    port_loading_text: String,
+    port_discharge_text: String,
+    country_origin: String,
+    final_destination_text: String,
+    payment_terms: String,
+    export_terms: String,
+    hsn_codes: String,
+    products_desc: String,
+    lc_no: String,
+    lc_issue_date: String,
+    lc_expiry_date: String,
+    proforma_date: String,
+    latest_shipment_date: String,
+    shipping_line: String,
+    vessel_name: String,
+    voyage_number: String,
+    booking_number: String,
+    bl_number: String,
+    etd: String,
+    eta: String,
+    bank_name: String,
+    bank_account: String,
+    bank_swift: String,
+    bank_ifsc: String,
+    bank_branch: String,
+    loading_charge: { type: Number, default: 0 },
+    amount_in_words: String,
+    declaration: String,
+    rodtep_text: String,
+    igst_bond_text: String,
+    total_packages: Number,
+    total_amount: Number,
+    total_net_weight: Number,
+    total_gross_weight: Number,
+    permission_no: String,
+    commissionerate: String,
+    location_code: String,
+    examination_date: String,
+    examining_officer: String,
+    created_by: String,
+    created_by_name: String,
+    customer_snapshot: { type: Schema.Types.Mixed, default: {} },
+    supplier_snapshot: { type: Schema.Types.Mixed, default: {} },
+    bank_snapshot: { type: Schema.Types.Mixed, default: {} },
+    gst_bills: { type: [gstBillSchema], default: [] },
+    meta: { type: Schema.Types.Mixed, default: {} },
+    country_requirements: { type: Schema.Types.Mixed, default: {} },
+    containers: { type: [containerSchema], default: [] },
+    items: { type: [itemSchema], default: [] },
+    packing_lines: { type: [packingLineSchema], default: [] },
+    stages: { type: [stageSchema], default: [] },
+    deleted_at: Date,
+  },
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } },
+);
+
+applicationSchema.index({ invoice_no: 1 });
+applicationSchema.index({ status: 1 });
+applicationSchema.index({ country_id: 1 });
+applicationSchema.index({ final_destination_text: 1 });
+applicationSchema.index({ created_by: 1 });
+applicationSchema.index({ assigned_to: 1 });
+applicationSchema.index({ created_at: -1 });
+
+export const Application = mongoose.model("Application", applicationSchema);
+
+export const DEFAULT_STAGES = [
+  { stage_key: "created", stage_label: "Application Created", seq: 0 },
+  { stage_key: "customer", stage_label: "Customer Details", seq: 1 },
+  { stage_key: "supplier", stage_label: "Supplier Details", seq: 2 },
+  { stage_key: "product", stage_label: "Product Entry", seq: 3 },
+  { stage_key: "invoice", stage_label: "Invoice Generated", seq: 4 },
+  { stage_key: "packing", stage_label: "Packing List Generated", seq: 5 },
+  { stage_key: "certificates", stage_label: "Certificates Generated", seq: 6 },
+  { stage_key: "customs", stage_label: "Customs Clearance", seq: 7 },
+  { stage_key: "dispatch", stage_label: "Dispatch", seq: 8 },
+  { stage_key: "completed", stage_label: "Shipment Completed", seq: 9 },
+];

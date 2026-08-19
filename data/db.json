@@ -1,0 +1,961 @@
+{
+  "users": [
+    {
+      "id": "4c98c709-7f55-4b53-9402-8df15133182e",
+      "created_at": "2026-08-18T12:12:29.960Z",
+      "updated_at": "2026-08-18T12:12:29.960Z",
+      "createdAt": "2026-08-18T12:12:29.960Z",
+      "updatedAt": "2026-08-18T12:12:29.960Z",
+      "name": "Anita Iyer",
+      "email": "anita@srihari.co",
+      "passwordHash": "$2a$10$Sdj0nOMWT4P2r9owjNg57urOrbaKhpsQbuUZdy/06zvPVeJv/qY.G",
+      "role": "sales",
+      "countries": [
+        "Nigeria"
+      ],
+      "active": true
+    },
+    {
+      "id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "created_at": "2026-08-18T12:10:03.099Z",
+      "updated_at": "2026-08-19T01:19:56.799Z",
+      "createdAt": "2026-08-18T12:10:03.099Z",
+      "updatedAt": "2026-08-19T01:19:56.799Z",
+      "name": "Rahul Mehta",
+      "email": "employee@srihari.co",
+      "passwordHash": "$2a$10$inlQdMS1Nyd4p1clciERWupmoFvId1lKSpH46saFy8kpImNB6SDzq",
+      "role": "documentation",
+      "countries": [
+        "USA",
+        "France"
+      ],
+      "active": true,
+      "lastLoginAt": "2026-08-19T01:19:56.799Z"
+    },
+    {
+      "id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "created_at": "2026-08-18T12:10:02.971Z",
+      "updated_at": "2026-08-19T01:19:56.494Z",
+      "createdAt": "2026-08-18T12:10:02.971Z",
+      "updatedAt": "2026-08-19T01:19:56.494Z",
+      "name": "Arjun Patel",
+      "email": "admin@srihari.co",
+      "passwordHash": "$2a$10$5zrjQ38lAZyJnW9muGODbOZpfUQVgelut1da0X8inFnRxa4oFkfaa",
+      "role": "super_admin",
+      "countries": [
+        "ALL"
+      ],
+      "active": true,
+      "lastLoginAt": "2026-08-19T01:19:56.494Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": "5e35d208-4796-4461-9690-fcbcc879fab8",
+      "created_at": "2026-08-19T01:19:56.865Z",
+      "updated_at": "2026-08-19T01:19:56.992Z",
+      "createdAt": "2026-08-19T01:19:56.865Z",
+      "updatedAt": "2026-08-19T01:19:56.992Z",
+      "consignee_name": "Test Buyer",
+      "final_destination_text": "USA",
+      "country_id": "USA",
+      "items": [
+        {
+          "description": "EASTERN PAN",
+          "dimensions": "",
+          "hsn_code": "",
+          "quantity": 10,
+          "unit": "PCS",
+          "rate": 3.2,
+          "amount": 32,
+          "id": "60b91df1-7ea6-4965-a1a9-1f313a082a1a",
+          "seq": 0
+        }
+      ],
+      "total_amount": 32,
+      "total_packages": 0,
+      "total_net_weight": 0,
+      "total_gross_weight": 0,
+      "customer_snapshot": {
+        "company_name": "Test Buyer",
+        "country": "USA"
+      },
+      "supplier_snapshot": {},
+      "bank_snapshot": {},
+      "meta": {},
+      "app_no": "SHE260003",
+      "invoice_no": "EXP 2",
+      "financial_year": "2026-2027",
+      "status": "APPROVED",
+      "current_stage": "invoice",
+      "created_by": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "created_by_name": "Rahul Mehta",
+      "exporter_name": "SHREE HARI EXPORT HOUSE",
+      "exporter_address": "SHOP NO. 1, SECOND FLOOR, SURVEY NO. 95 P2, PLOT NO. 2, NEAR NILKANTH PARK SOCIETY, MAHENDRANAGAR BUS STAND, MORBI HALVAD ROAD, MAHENDRANAGAR, MORBI-363642, GUJARAT, INDIA",
+      "iec_no": "ADSFS7838P1ZX",
+      "gst_no": "24ADSFS7838P1ZX",
+      "bin_no": "ADSFS7838P1ZX FT 001",
+      "aeo_no": "IN ADSFS7838P1F214",
+      "lut_no": "AD2403250559720 24/03/2025",
+      "state_of_origin": "GUJARAT",
+      "declaration": "We declare that this Invoice show the actual price of the goods described and that all the particulars are true and correct",
+      "rodtep_text": "I/WE SHALL CLAIM UNDER CHAPTER 3 INCENTIVE OF FTP AS ADMISSIBLE AT TIME POLICY IN FORCE i.e, RoDTEP SCHEME",
+      "igst_bond_text": "SUPPLY MEANT FOR EXPORT UNDER BOND WITHOUT PAYMENT OF INTEGRATED TAX [IGST]",
+      "version": 1,
+      "containers": [],
+      "packing_lines": [],
+      "stages": [
+        {
+          "stage_key": "created",
+          "stage_label": "Application Created",
+          "seq": 0,
+          "id": "0112226c-4b64-4af3-9410-b7e369d3dd37",
+          "status": "completed",
+          "acted_at": "2026-08-19T01:19:56.864Z"
+        },
+        {
+          "stage_key": "customer",
+          "stage_label": "Customer Details",
+          "seq": 1,
+          "id": "9969b550-501c-4881-a50d-c7fc166e9e12",
+          "status": "in_progress"
+        },
+        {
+          "stage_key": "supplier",
+          "stage_label": "Supplier Details",
+          "seq": 2,
+          "id": "d228e5e7-0c08-41e0-8b73-445909a04a26",
+          "status": "pending"
+        },
+        {
+          "stage_key": "product",
+          "stage_label": "Product Entry",
+          "seq": 3,
+          "id": "6524bd16-2b40-48be-abe2-e3050c59f1b4",
+          "status": "pending"
+        },
+        {
+          "stage_key": "invoice",
+          "stage_label": "Invoice Generated",
+          "seq": 4,
+          "id": "e933be03-8321-46ca-b682-7d7aa450f5f8",
+          "status": "pending"
+        },
+        {
+          "stage_key": "packing",
+          "stage_label": "Packing List Generated",
+          "seq": 5,
+          "id": "15e96ed8-37f0-4ef4-bae1-a5808cd79c6d",
+          "status": "pending"
+        },
+        {
+          "stage_key": "certificates",
+          "stage_label": "Certificates Generated",
+          "seq": 6,
+          "id": "c32bf336-5426-415a-a322-6b404b72896b",
+          "status": "pending"
+        },
+        {
+          "stage_key": "customs",
+          "stage_label": "Customs Clearance",
+          "seq": 7,
+          "id": "9ce88940-7900-4da6-a989-cd70e3969917",
+          "status": "pending"
+        },
+        {
+          "stage_key": "dispatch",
+          "stage_label": "Dispatch",
+          "seq": 8,
+          "id": "98449f2d-1e6b-45b2-ae7e-87652e51d72c",
+          "status": "pending"
+        },
+        {
+          "stage_key": "completed",
+          "stage_label": "Shipment Completed",
+          "seq": 9,
+          "id": "ba956995-3704-4197-9ffe-19c8c804aaa1",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "dd8c7e6a-8676-4713-b606-fca26233512a",
+      "created_at": "2026-08-19T01:18:13.437Z",
+      "updated_at": "2026-08-19T01:18:13.515Z",
+      "createdAt": "2026-08-19T01:18:13.437Z",
+      "updatedAt": "2026-08-19T01:18:13.515Z",
+      "consignee_name": "Test Buyer",
+      "final_destination_text": "USA",
+      "country_id": "USA",
+      "items": [
+        {
+          "description": "EASTERN PAN",
+          "dimensions": "",
+          "hsn_code": "",
+          "quantity": 10,
+          "unit": "PCS",
+          "rate": 3.2,
+          "amount": 32,
+          "id": "d56f9188-0602-42dc-9c92-84239cf35d11",
+          "seq": 0
+        }
+      ],
+      "total_amount": 32,
+      "total_packages": 0,
+      "total_net_weight": 0,
+      "total_gross_weight": 0,
+      "customer_snapshot": {
+        "company_name": "Test Buyer",
+        "country": "USA"
+      },
+      "supplier_snapshot": {},
+      "bank_snapshot": {},
+      "meta": {},
+      "app_no": "SHE260002",
+      "invoice_no": "EXP 1",
+      "financial_year": "2026-2027",
+      "status": "APPROVED",
+      "current_stage": "invoice",
+      "created_by": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "created_by_name": "Rahul Mehta",
+      "exporter_name": "SHREE HARI EXPORT HOUSE",
+      "exporter_address": "SHOP NO. 1, SECOND FLOOR, SURVEY NO. 95 P2, PLOT NO. 2, NEAR NILKANTH PARK SOCIETY, MAHENDRANAGAR BUS STAND, MORBI HALVAD ROAD, MAHENDRANAGAR, MORBI-363642, GUJARAT, INDIA",
+      "iec_no": "ADSFS7838P1ZX",
+      "gst_no": "24ADSFS7838P1ZX",
+      "bin_no": "ADSFS7838P1ZX FT 001",
+      "aeo_no": "IN ADSFS7838P1F214",
+      "lut_no": "AD2403250559720 24/03/2025",
+      "state_of_origin": "GUJARAT",
+      "declaration": "We declare that this Invoice show the actual price of the goods described and that all the particulars are true and correct",
+      "rodtep_text": "I/WE SHALL CLAIM UNDER CHAPTER 3 INCENTIVE OF FTP AS ADMISSIBLE AT TIME POLICY IN FORCE i.e, RoDTEP SCHEME",
+      "igst_bond_text": "SUPPLY MEANT FOR EXPORT UNDER BOND WITHOUT PAYMENT OF INTEGRATED TAX [IGST]",
+      "version": 1,
+      "containers": [],
+      "packing_lines": [],
+      "stages": [
+        {
+          "stage_key": "created",
+          "stage_label": "Application Created",
+          "seq": 0,
+          "id": "ee31aa6f-01ec-42eb-9ada-36b0ad18c12b",
+          "status": "completed",
+          "acted_at": "2026-08-19T01:18:13.436Z"
+        },
+        {
+          "stage_key": "customer",
+          "stage_label": "Customer Details",
+          "seq": 1,
+          "id": "0bb66631-5598-4b2d-b519-7df6aa43c3a1",
+          "status": "in_progress"
+        },
+        {
+          "stage_key": "supplier",
+          "stage_label": "Supplier Details",
+          "seq": 2,
+          "id": "7bb337dc-e421-4404-adad-f3ef484c7cc7",
+          "status": "pending"
+        },
+        {
+          "stage_key": "product",
+          "stage_label": "Product Entry",
+          "seq": 3,
+          "id": "2c3b2490-9aed-4ca6-beb6-bc4f02dd575b",
+          "status": "pending"
+        },
+        {
+          "stage_key": "invoice",
+          "stage_label": "Invoice Generated",
+          "seq": 4,
+          "id": "13dbe342-60ff-44db-9094-48379714b794",
+          "status": "pending"
+        },
+        {
+          "stage_key": "packing",
+          "stage_label": "Packing List Generated",
+          "seq": 5,
+          "id": "ae42ea60-3570-4f52-952c-cd01891fd63c",
+          "status": "pending"
+        },
+        {
+          "stage_key": "certificates",
+          "stage_label": "Certificates Generated",
+          "seq": 6,
+          "id": "3220a84a-ba56-4997-a07e-705521625fff",
+          "status": "pending"
+        },
+        {
+          "stage_key": "customs",
+          "stage_label": "Customs Clearance",
+          "seq": 7,
+          "id": "91b4f285-cdbd-47f3-9567-9d9281478edf",
+          "status": "pending"
+        },
+        {
+          "stage_key": "dispatch",
+          "stage_label": "Dispatch",
+          "seq": 8,
+          "id": "ea11fb0f-f796-4b65-9f6a-1d3f9e73b60e",
+          "status": "pending"
+        },
+        {
+          "stage_key": "completed",
+          "stage_label": "Shipment Completed",
+          "seq": 9,
+          "id": "7ec2eba6-62a7-4c08-bdd8-f800570acd92",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "eac83377-c908-4bcc-ac1f-7bbe57a87b4b",
+      "created_at": "2026-08-18T12:31:06.244Z",
+      "updated_at": "2026-08-18T12:31:06.244Z",
+      "createdAt": "2026-08-18T12:31:06.244Z",
+      "updatedAt": "2026-08-18T12:31:06.244Z",
+      "consignee_name": "Ceylon Trading Co.",
+      "final_destination_text": "Sri Lanka",
+      "invoice_no": "INV-001",
+      "status": "in_progress",
+      "app_no": "SHE260001",
+      "current_stage": "commercial_invoice",
+      "created_by": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "meta": {},
+      "containers": [],
+      "items": [],
+      "stages": [
+        {
+          "id": "2ede69a9-2fa1-447c-87a6-4b513ecf71f9",
+          "seq": 0,
+          "stage_key": "created",
+          "stage_label": "Application Created",
+          "status": "completed",
+          "acted_at": "2026-08-18T12:31:06.244Z"
+        },
+        {
+          "id": "75f3475e-18fb-4c6f-b0b6-9bab707e1b20",
+          "seq": 1,
+          "stage_key": "customer",
+          "stage_label": "Customer Details",
+          "status": "in_progress"
+        },
+        {
+          "id": "f4ecaaf7-f74c-4cd2-baf5-efe7ab92b6cc",
+          "seq": 2,
+          "stage_key": "supplier",
+          "stage_label": "Supplier Details",
+          "status": "pending"
+        },
+        {
+          "id": "93ccb043-806e-4b21-ad79-2660ee552514",
+          "seq": 3,
+          "stage_key": "product",
+          "stage_label": "Product Entry",
+          "status": "pending"
+        },
+        {
+          "id": "526068c5-f9a6-4ef0-ba67-6a5217f6a7d9",
+          "seq": 4,
+          "stage_key": "invoice",
+          "stage_label": "Invoice Generated",
+          "status": "pending"
+        },
+        {
+          "id": "1552d7cc-1aa0-42a4-80cc-a672551b258b",
+          "seq": 5,
+          "stage_key": "packing",
+          "stage_label": "Packing List Generated",
+          "status": "pending"
+        },
+        {
+          "id": "10fc9fbd-ad3d-46a5-8ff8-49de23317668",
+          "seq": 6,
+          "stage_key": "certificates",
+          "stage_label": "Certificates Generated",
+          "status": "pending"
+        },
+        {
+          "id": "34cfd1af-f0dc-477d-9e11-921a1ddd7992",
+          "seq": 7,
+          "stage_key": "customs",
+          "stage_label": "Customs Clearance",
+          "status": "pending"
+        },
+        {
+          "id": "c12d7462-d1c9-48a7-9bbc-df0dca66e1ec",
+          "seq": 8,
+          "stage_key": "dispatch",
+          "stage_label": "Dispatch",
+          "status": "pending"
+        },
+        {
+          "id": "f00c9b12-76b9-40f7-b30f-8037eeed6954",
+          "seq": 9,
+          "stage_key": "completed",
+          "stage_label": "Shipment Completed",
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "customers": [
+    {
+      "id": "1e196866-6c2f-4da3-a93e-91d382e9a3a3",
+      "created_at": "2026-08-18T12:10:03.205Z",
+      "updated_at": "2026-08-18T12:10:03.205Z",
+      "createdAt": "2026-08-18T12:10:03.205Z",
+      "updatedAt": "2026-08-18T12:10:03.205Z",
+      "name": "Atlantic Global Imports Inc.",
+      "contact_person": "James Carter",
+      "email": "james@atlantic.example",
+      "city": "New York",
+      "phone": "+1 212 555 0199"
+    },
+    {
+      "id": "f6ed026b-6dc1-4ba5-b46b-e5392b11ef7b",
+      "created_at": "2026-08-18T12:10:03.193Z",
+      "updated_at": "2026-08-18T12:10:03.193Z",
+      "createdAt": "2026-08-18T12:10:03.193Z",
+      "updatedAt": "2026-08-18T12:10:03.193Z",
+      "name": "Lagos Foods Import Ltd.",
+      "contact_person": "Adaobi Okonkwo",
+      "email": "ada@lagosfoods.example",
+      "city": "Lagos",
+      "phone": "+234 1 234 5678"
+    },
+    {
+      "id": "c4852359-4f02-4cfc-b11b-f56626505e78",
+      "created_at": "2026-08-18T12:10:03.192Z",
+      "updated_at": "2026-08-18T12:10:03.192Z",
+      "createdAt": "2026-08-18T12:10:03.192Z",
+      "updatedAt": "2026-08-18T12:10:03.192Z",
+      "name": "Ceylon Trading Co.",
+      "contact_person": "Nimal Perera",
+      "email": "nimal@ceylon.example",
+      "city": "Colombo",
+      "phone": "+94 11 234 5678"
+    }
+  ],
+  "products": [
+    {
+      "id": "757b0b72-4103-4223-bb9f-c03a6009e00a",
+      "created_at": "2026-08-18T12:10:03.244Z",
+      "updated_at": "2026-08-18T12:10:03.244Z",
+      "createdAt": "2026-08-18T12:10:03.244Z",
+      "updatedAt": "2026-08-18T12:10:03.244Z",
+      "name": "Cotton Fabric 120 GSM",
+      "hsn_code": "5208.42",
+      "unit": "SQM",
+      "default_rate": 1.85
+    },
+    {
+      "id": "305b1150-97da-4ea2-8112-8324374baf37",
+      "created_at": "2026-08-18T12:10:03.229Z",
+      "updated_at": "2026-08-18T12:10:03.229Z",
+      "createdAt": "2026-08-18T12:10:03.229Z",
+      "updatedAt": "2026-08-18T12:10:03.229Z",
+      "name": "Turmeric Powder",
+      "hsn_code": "0910.30",
+      "unit": "KG",
+      "default_rate": 4.2
+    },
+    {
+      "id": "06e28d47-9942-4247-844c-6517c456baf7",
+      "created_at": "2026-08-18T12:10:03.216Z",
+      "updated_at": "2026-08-18T12:10:03.216Z",
+      "createdAt": "2026-08-18T12:10:03.216Z",
+      "updatedAt": "2026-08-18T12:10:03.216Z",
+      "name": "Basmati Rice 1121",
+      "hsn_code": "1006.30",
+      "unit": "MT",
+      "default_rate": 980
+    }
+  ],
+  "countries": [
+    {
+      "id": "6985ecbc-8fbf-40e3-9786-9466d339542d",
+      "created_at": "2026-08-18T12:10:03.178Z",
+      "updated_at": "2026-08-18T12:10:03.178Z",
+      "createdAt": "2026-08-18T12:10:03.178Z",
+      "updatedAt": "2026-08-18T12:10:03.178Z",
+      "name": "USA",
+      "code": "US"
+    },
+    {
+      "id": "896e0c1c-e27a-485c-b498-ab88b926f370",
+      "created_at": "2026-08-18T12:10:03.164Z",
+      "updated_at": "2026-08-18T12:10:03.164Z",
+      "createdAt": "2026-08-18T12:10:03.164Z",
+      "updatedAt": "2026-08-18T12:10:03.164Z",
+      "name": "France",
+      "code": "FR"
+    },
+    {
+      "id": "0f51593a-5a49-4408-9209-aae54664d779",
+      "created_at": "2026-08-18T12:10:03.154Z",
+      "updated_at": "2026-08-18T12:10:03.154Z",
+      "createdAt": "2026-08-18T12:10:03.154Z",
+      "updatedAt": "2026-08-18T12:10:03.154Z",
+      "name": "Dubai",
+      "code": "AE"
+    },
+    {
+      "id": "7707ae36-6dd6-4e27-b6ce-04f584623d0f",
+      "created_at": "2026-08-18T12:10:03.143Z",
+      "updated_at": "2026-08-18T12:10:03.143Z",
+      "createdAt": "2026-08-18T12:10:03.143Z",
+      "updatedAt": "2026-08-18T12:10:03.143Z",
+      "name": "Guinea",
+      "code": "GN"
+    },
+    {
+      "id": "8d6afd3e-b5eb-46a0-bba0-f4d24423ac59",
+      "created_at": "2026-08-18T12:10:03.129Z",
+      "updated_at": "2026-08-18T12:10:03.129Z",
+      "createdAt": "2026-08-18T12:10:03.129Z",
+      "updatedAt": "2026-08-18T12:10:03.129Z",
+      "name": "Uzbekistan",
+      "code": "UZ"
+    },
+    {
+      "id": "9890e69d-359b-44e0-8899-35f2103c79fd",
+      "created_at": "2026-08-18T12:10:03.115Z",
+      "updated_at": "2026-08-18T12:10:03.115Z",
+      "createdAt": "2026-08-18T12:10:03.115Z",
+      "updatedAt": "2026-08-18T12:10:03.115Z",
+      "name": "Nepal",
+      "code": "NP"
+    },
+    {
+      "id": "3a6d980e-df2b-4e74-950a-ac3a34ac4e73",
+      "created_at": "2026-08-18T12:10:03.104Z",
+      "updated_at": "2026-08-18T12:10:03.104Z",
+      "createdAt": "2026-08-18T12:10:03.104Z",
+      "updatedAt": "2026-08-18T12:10:03.104Z",
+      "name": "Nigeria",
+      "code": "NG"
+    },
+    {
+      "id": "b8a15b6a-354f-49bd-a6a3-f9d1d9b543d3",
+      "created_at": "2026-08-18T12:10:03.100Z",
+      "updated_at": "2026-08-18T12:10:03.100Z",
+      "createdAt": "2026-08-18T12:10:03.100Z",
+      "updatedAt": "2026-08-18T12:10:03.100Z",
+      "name": "Sri Lanka",
+      "code": "LK"
+    }
+  ],
+  "ports": [
+    {
+      "id": "e64d5167-0400-4e39-a893-a94451f8dd79",
+      "created_at": "2026-08-18T12:10:03.258Z",
+      "updated_at": "2026-08-18T12:10:03.258Z",
+      "createdAt": "2026-08-18T12:10:03.258Z",
+      "updatedAt": "2026-08-18T12:10:03.258Z",
+      "name": "Jebel Ali",
+      "code": "AEJEA",
+      "port_type": "sea"
+    },
+    {
+      "id": "bc37d1a1-98f2-4ba0-927e-4cf4899a61ba",
+      "created_at": "2026-08-18T12:10:03.246Z",
+      "updated_at": "2026-08-18T12:10:03.246Z",
+      "createdAt": "2026-08-18T12:10:03.246Z",
+      "updatedAt": "2026-08-18T12:10:03.246Z",
+      "name": "Nhava Sheva",
+      "code": "INNSA",
+      "port_type": "sea"
+    },
+    {
+      "id": "0796dcb0-922d-4129-9633-be27a1402798",
+      "created_at": "2026-08-18T12:10:03.245Z",
+      "updated_at": "2026-08-18T12:10:03.245Z",
+      "createdAt": "2026-08-18T12:10:03.245Z",
+      "updatedAt": "2026-08-18T12:10:03.245Z",
+      "name": "Mundra",
+      "code": "INMUN",
+      "port_type": "sea"
+    }
+  ],
+  "shipping_lines": [
+    {
+      "id": "920f5d24-5b8a-46f3-a64c-7a1455357826",
+      "created_at": "2026-08-18T12:10:03.281Z",
+      "updated_at": "2026-08-18T12:10:03.281Z",
+      "createdAt": "2026-08-18T12:10:03.281Z",
+      "updatedAt": "2026-08-18T12:10:03.281Z",
+      "name": "MSC",
+      "code": "MSCU"
+    },
+    {
+      "id": "5e7b0b1b-b060-4cdd-8211-c4c09becfbc3",
+      "created_at": "2026-08-18T12:10:03.267Z",
+      "updated_at": "2026-08-18T12:10:03.267Z",
+      "createdAt": "2026-08-18T12:10:03.267Z",
+      "updatedAt": "2026-08-18T12:10:03.267Z",
+      "name": "Maersk",
+      "code": "MAEU"
+    }
+  ],
+  "banks": [
+    {
+      "id": "2780df11-61cf-4b5c-a49e-e66599ddbced",
+      "created_at": "2026-08-18T12:10:03.293Z",
+      "updated_at": "2026-08-18T12:10:03.293Z",
+      "createdAt": "2026-08-18T12:10:03.293Z",
+      "updatedAt": "2026-08-18T12:10:03.293Z",
+      "bank_name": "HDFC Bank",
+      "account_no": "50200012345678",
+      "swift_code": "HDFCINBB",
+      "ifsc_code": "HDFC0000123",
+      "branch": "Morbi",
+      "ad_code": "0260001"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "eef5ae27-2aec-4823-b76f-7aac93ea8284",
+      "created_at": "2026-08-19T01:18:13.018Z",
+      "updated_at": "2026-08-19T01:18:13.018Z",
+      "createdAt": "2026-08-19T01:18:13.018Z",
+      "updatedAt": "2026-08-19T01:18:13.018Z",
+      "name": "DUCK SANITARYWARE LLP",
+      "gst_no": "24AAVFD3915G1ZC",
+      "factory_address": "SURVEY NO. 5 P2, 3, OPP. UNCHI MANDAL, TALAVIYA SHANALA ROAD, HALVAD ROAD, MORBI, GUJARAT-363642",
+      "country": "India",
+      "is_demo": true,
+      "active": true
+    }
+  ],
+  "notifications": [
+    {
+      "id": "98656103-4790-44a7-8fc1-1411a12f9771",
+      "created_at": "2026-08-19T01:19:57.023Z",
+      "updated_at": "2026-08-19T01:19:57.023Z",
+      "createdAt": "2026-08-19T01:19:57.023Z",
+      "updatedAt": "2026-08-19T01:19:57.023Z",
+      "user_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "title": "Application approved",
+      "message": "Application SHE260003 has been approved.",
+      "type": "success",
+      "entity_type": "application",
+      "entity_id": "5e35d208-4796-4461-9690-fcbcc879fab8",
+      "body": "Application SHE260003 has been approved.",
+      "read": false,
+      "isRead": false
+    },
+    {
+      "id": "e9176c07-d7a1-4586-a160-9e23aef95228",
+      "created_at": "2026-08-19T01:19:56.925Z",
+      "updated_at": "2026-08-19T01:19:56.925Z",
+      "createdAt": "2026-08-19T01:19:56.925Z",
+      "updatedAt": "2026-08-19T01:19:56.925Z",
+      "user_id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "title": "New application waiting for approval",
+      "message": "Application SHE260003 is waiting for approval.",
+      "type": "approval",
+      "entity_type": "application",
+      "entity_id": "5e35d208-4796-4461-9690-fcbcc879fab8",
+      "body": "Application SHE260003 is waiting for approval.",
+      "read": false,
+      "isRead": false
+    },
+    {
+      "id": "9bd61555-7470-425f-bb86-e42ba2e5dbd2",
+      "created_at": "2026-08-19T01:18:13.529Z",
+      "updated_at": "2026-08-19T01:18:13.529Z",
+      "createdAt": "2026-08-19T01:18:13.529Z",
+      "updatedAt": "2026-08-19T01:18:13.529Z",
+      "user_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "title": "Application approved",
+      "message": "Application SHE260002 has been approved.",
+      "type": "success",
+      "entity_type": "application",
+      "entity_id": "dd8c7e6a-8676-4713-b606-fca26233512a",
+      "body": "Application SHE260002 has been approved.",
+      "read": false,
+      "isRead": false
+    },
+    {
+      "id": "8da21423-025d-447d-940c-70f1a00cc190",
+      "created_at": "2026-08-19T01:18:13.493Z",
+      "updated_at": "2026-08-19T01:18:13.493Z",
+      "createdAt": "2026-08-19T01:18:13.493Z",
+      "updatedAt": "2026-08-19T01:18:13.493Z",
+      "user_id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "title": "New application waiting for approval",
+      "message": "Application SHE260002 is waiting for approval.",
+      "type": "approval",
+      "entity_type": "application",
+      "entity_id": "dd8c7e6a-8676-4713-b606-fca26233512a",
+      "body": "Application SHE260002 is waiting for approval.",
+      "read": false,
+      "isRead": false
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "03af2032-baa6-4434-b792-057601a6a17f",
+      "created_at": "2026-08-19T01:19:57.007Z",
+      "updated_at": "2026-08-19T01:19:57.007Z",
+      "createdAt": "2026-08-19T01:19:57.007Z",
+      "updatedAt": "2026-08-19T01:19:57.007Z",
+      "user_id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "user_name": "Arjun Patel",
+      "action": "APPLICATION_APPROVED",
+      "entity_type": "application",
+      "entity_id": "5e35d208-4796-4461-9690-fcbcc879fab8",
+      "description": "Application SHE260003: UNDER_REVIEW → APPROVED",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {
+        "comment": "Customer and invoice details verified."
+      }
+    },
+    {
+      "id": "0ac72f71-c9c4-4572-b788-35274607f9f0",
+      "created_at": "2026-08-19T01:19:56.907Z",
+      "updated_at": "2026-08-19T01:19:56.907Z",
+      "createdAt": "2026-08-19T01:19:56.907Z",
+      "updatedAt": "2026-08-19T01:19:56.907Z",
+      "user_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "user_name": "Rahul Mehta",
+      "action": "APPLICATION_SUBMITTED",
+      "entity_type": "application",
+      "entity_id": "5e35d208-4796-4461-9690-fcbcc879fab8",
+      "description": "Application SHE260003: DRAFT → SUBMITTED",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {}
+    },
+    {
+      "id": "a662f23b-c0ff-4692-903a-250d69be6643",
+      "created_at": "2026-08-19T01:19:56.885Z",
+      "updated_at": "2026-08-19T01:19:56.885Z",
+      "createdAt": "2026-08-19T01:19:56.885Z",
+      "updatedAt": "2026-08-19T01:19:56.885Z",
+      "user_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "user_name": "Rahul Mehta",
+      "action": "APPLICATION_CREATED",
+      "entity_type": "application",
+      "entity_id": "5e35d208-4796-4461-9690-fcbcc879fab8",
+      "description": "Created application SHE260003",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {}
+    },
+    {
+      "id": "4ec27579-c1c2-450f-9529-831c4379fe8b",
+      "created_at": "2026-08-19T01:19:56.804Z",
+      "updated_at": "2026-08-19T01:19:56.804Z",
+      "createdAt": "2026-08-19T01:19:56.804Z",
+      "updatedAt": "2026-08-19T01:19:56.804Z",
+      "user_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "user_name": "Rahul Mehta",
+      "action": "LOGIN",
+      "entity_type": "user",
+      "entity_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "description": "employee@srihari.co signed in",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {}
+    },
+    {
+      "id": "1bc1358f-2e8e-4278-ac48-6f9b5c4c0c25",
+      "created_at": "2026-08-19T01:19:56.508Z",
+      "updated_at": "2026-08-19T01:19:56.508Z",
+      "createdAt": "2026-08-19T01:19:56.508Z",
+      "updatedAt": "2026-08-19T01:19:56.508Z",
+      "user_id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "user_name": "Arjun Patel",
+      "action": "LOGIN",
+      "entity_type": "user",
+      "entity_id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "description": "admin@srihari.co signed in",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {}
+    },
+    {
+      "id": "a4f30409-5553-4b54-a77e-b3a29c96e895",
+      "created_at": "2026-08-19T01:18:13.521Z",
+      "updated_at": "2026-08-19T01:18:13.521Z",
+      "createdAt": "2026-08-19T01:18:13.521Z",
+      "updatedAt": "2026-08-19T01:18:13.521Z",
+      "user_id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "user_name": "Arjun Patel",
+      "action": "APPLICATION_APPROVED",
+      "entity_type": "application",
+      "entity_id": "dd8c7e6a-8676-4713-b606-fca26233512a",
+      "description": "Application SHE260002: UNDER_REVIEW → APPROVED",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {
+        "comment": "Customer and invoice details verified."
+      }
+    },
+    {
+      "id": "2984d4f0-4770-4aab-92a1-dd3fdd6ff61f",
+      "created_at": "2026-08-19T01:18:13.474Z",
+      "updated_at": "2026-08-19T01:18:13.474Z",
+      "createdAt": "2026-08-19T01:18:13.474Z",
+      "updatedAt": "2026-08-19T01:18:13.474Z",
+      "user_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "user_name": "Rahul Mehta",
+      "action": "APPLICATION_SUBMITTED",
+      "entity_type": "application",
+      "entity_id": "dd8c7e6a-8676-4713-b606-fca26233512a",
+      "description": "Application SHE260002: DRAFT → SUBMITTED",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {}
+    },
+    {
+      "id": "37700c16-729f-48cc-a3be-74a4ef9606a6",
+      "created_at": "2026-08-19T01:18:13.449Z",
+      "updated_at": "2026-08-19T01:18:13.449Z",
+      "createdAt": "2026-08-19T01:18:13.449Z",
+      "updatedAt": "2026-08-19T01:18:13.449Z",
+      "user_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "user_name": "Rahul Mehta",
+      "action": "APPLICATION_CREATED",
+      "entity_type": "application",
+      "entity_id": "dd8c7e6a-8676-4713-b606-fca26233512a",
+      "description": "Created application SHE260002",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {}
+    },
+    {
+      "id": "39946070-6d73-4e24-bbc8-219e9f12cfd6",
+      "created_at": "2026-08-19T01:18:13.394Z",
+      "updated_at": "2026-08-19T01:18:13.394Z",
+      "createdAt": "2026-08-19T01:18:13.394Z",
+      "updatedAt": "2026-08-19T01:18:13.394Z",
+      "user_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "user_name": "Rahul Mehta",
+      "action": "LOGIN",
+      "entity_type": "user",
+      "entity_id": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "description": "employee@srihari.co signed in",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {}
+    },
+    {
+      "id": "c243b09b-cc19-4130-8e4e-9827d7049979",
+      "created_at": "2026-08-19T01:18:13.186Z",
+      "updated_at": "2026-08-19T01:18:13.186Z",
+      "createdAt": "2026-08-19T01:18:13.186Z",
+      "updatedAt": "2026-08-19T01:18:13.186Z",
+      "user_id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "user_name": "Arjun Patel",
+      "action": "LOGIN",
+      "entity_type": "user",
+      "entity_id": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "description": "admin@srihari.co signed in",
+      "ip": "::ffff:127.0.0.1",
+      "metadata": {}
+    }
+  ],
+  "approval_histories": [
+    {
+      "id": "35b5185c-aa34-4687-95cc-093e39c92274",
+      "created_at": "2026-08-19T01:19:57.006Z",
+      "updated_at": "2026-08-19T01:19:57.006Z",
+      "createdAt": "2026-08-19T01:19:57.006Z",
+      "updatedAt": "2026-08-19T01:19:57.006Z",
+      "application_id": "5e35d208-4796-4461-9690-fcbcc879fab8",
+      "action": "APPLICATION_APPROVED",
+      "previous_status": "UNDER_REVIEW",
+      "new_status": "APPROVED",
+      "performed_by": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "performed_by_name": "Arjun Patel",
+      "comment": "Customer and invoice details verified.",
+      "performed_at": "2026-08-19T01:19:57.006Z"
+    },
+    {
+      "id": "a5e07a71-d268-4432-8f6c-810319cf27c4",
+      "created_at": "2026-08-19T01:19:56.906Z",
+      "updated_at": "2026-08-19T01:19:56.906Z",
+      "createdAt": "2026-08-19T01:19:56.906Z",
+      "updatedAt": "2026-08-19T01:19:56.906Z",
+      "application_id": "5e35d208-4796-4461-9690-fcbcc879fab8",
+      "action": "APPLICATION_SUBMITTED",
+      "previous_status": "DRAFT",
+      "new_status": "SUBMITTED",
+      "performed_by": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "performed_by_name": "Rahul Mehta",
+      "comment": "",
+      "performed_at": "2026-08-19T01:19:56.906Z"
+    },
+    {
+      "id": "0099a916-8c18-404b-9dc3-a0f559763c37",
+      "created_at": "2026-08-19T01:18:13.520Z",
+      "updated_at": "2026-08-19T01:18:13.520Z",
+      "createdAt": "2026-08-19T01:18:13.520Z",
+      "updatedAt": "2026-08-19T01:18:13.520Z",
+      "application_id": "dd8c7e6a-8676-4713-b606-fca26233512a",
+      "action": "APPLICATION_APPROVED",
+      "previous_status": "UNDER_REVIEW",
+      "new_status": "APPROVED",
+      "performed_by": "97d09c93-d8d8-48b2-8c05-1af9f374c595",
+      "performed_by_name": "Arjun Patel",
+      "comment": "Customer and invoice details verified.",
+      "performed_at": "2026-08-19T01:18:13.520Z"
+    },
+    {
+      "id": "de986812-fa22-47dd-83f5-33eb83148bf5",
+      "created_at": "2026-08-19T01:18:13.460Z",
+      "updated_at": "2026-08-19T01:18:13.460Z",
+      "createdAt": "2026-08-19T01:18:13.460Z",
+      "updatedAt": "2026-08-19T01:18:13.460Z",
+      "application_id": "dd8c7e6a-8676-4713-b606-fca26233512a",
+      "action": "APPLICATION_SUBMITTED",
+      "previous_status": "DRAFT",
+      "new_status": "SUBMITTED",
+      "performed_by": "eafab270-d6f7-45dc-9de6-47374eb0461b",
+      "performed_by_name": "Rahul Mehta",
+      "comment": "",
+      "performed_at": "2026-08-19T01:18:13.460Z"
+    }
+  ],
+  "documents": [],
+  "counters": [
+    {
+      "id": "EXP",
+      "created_at": "2026-08-19T01:18:13.435Z",
+      "updated_at": "2026-08-19T01:19:56.863Z",
+      "createdAt": "2026-08-19T01:18:13.435Z",
+      "updatedAt": "2026-08-19T01:19:56.863Z",
+      "key": "EXP",
+      "seq": 2
+    }
+  ],
+  "settings": [
+    {
+      "id": "a954f21f-923d-4d69-995a-a359307f64b4",
+      "created_at": "2026-08-19T01:18:13.020Z",
+      "updated_at": "2026-08-19T01:19:56.280Z",
+      "createdAt": "2026-08-19T01:18:13.020Z",
+      "updatedAt": "2026-08-19T01:19:56.280Z",
+      "key": "company",
+      "value": {
+        "companyName": "SHREE HARI EXPORT HOUSE",
+        "letterheadAddress": "201, Survey No.95 P2, Plot No.2, Near Nilkanth Park, Morbi-2, Gujarat, INDIA.",
+        "exporterAddress": "SHOP NO. 1, SECOND FLOOR, SURVEY NO. 95 P2, PLOT NO. 2, NEAR NILKANTH PARK SOCIETY, MAHENDRANAGAR BUS STAND, MORBI HALVAD ROAD, MAHENDRANAGAR, MORBI-363642, GUJARAT, INDIA",
+        "emails": [
+          "shreehariexporthouse@gmail.com",
+          "osissanitarywares@gmail.com"
+        ],
+        "website": "www.osissanitaryware.com",
+        "phone": "+91 97140 15071",
+        "iec": "ADSFS7838P1ZX",
+        "gstin": "24ADSFS7838P1ZX",
+        "aeo": "IN ADSFS7838P1F214",
+        "bin": "ADSFS7838P1ZX FT 001",
+        "lutNo": "AD2403250559720 24/03/2025",
+        "stateOfOrigin": "GUJARAT",
+        "authorisedSignatory": "K. V. Patel",
+        "authorisedDesignation": "Partner",
+        "vgmOfficial": "MR. KISHORBHAI",
+        "rodtepText": "I/WE SHALL CLAIM UNDER CHAPTER 3 INCENTIVE OF FTP AS ADMISSIBLE AT TIME POLICY IN FORCE i.e, RoDTEP SCHEME",
+        "igstBondText": "SUPPLY MEANT FOR EXPORT UNDER BOND WITHOUT PAYMENT OF INTEGRATED TAX [IGST]",
+        "declaration": "We declare that this Invoice show the actual price of the goods described and that all the particulars are true and correct",
+        "brandBlue": "#0096D6",
+        "brandOrange": "#F38B21"
+      }
+    }
+  ],
+  "billing": []
+}
