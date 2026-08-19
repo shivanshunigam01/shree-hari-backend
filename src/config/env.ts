@@ -12,10 +12,12 @@ function firstToken(value: string) {
 export const env = {
   port: Number(process.env.PORT || 4000),
   nodeEnv: process.env.NODE_ENV || "development",
-  mongoUri: firstToken(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/shreehari_export"),
+  mongoUri: firstToken(
+    process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/shreehari_export",
+  ),
   jwtSecret: process.env.JWT_SECRET || "dev-secret",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
-  corsOrigin: process.env.CORS_ORIGIN || "http://localhost:8080",
+  corsOrigin: process.env.CORS_ORIGIN || "*",
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:8080",
   adminEmail: (process.env.ADMIN_EMAIL || "admin@srihari.co").toLowerCase(),
   adminPassword: process.env.ADMIN_PASSWORD || "Admin@1234",

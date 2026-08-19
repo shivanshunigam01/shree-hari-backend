@@ -25,23 +25,22 @@ import { dbMode } from "./config/db.js";
 import { pingCloudinary } from "./config/cloudinary.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const openapi = JSON.parse(fs.readFileSync(path.join(here, "openapi.json"), "utf8"));
+const openapi = JSON.parse(
+  fs.readFileSync(path.join(here, "openapi.json"), "utf8"),
+);
 
 export function createApp() {
   const app = express();
   app.set("trust proxy", 1);
   app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+  // Reflect any Origin so browser/desktop clients can call the API (needed when credentials is true; "*" cannot be used).
   app.use(
     cors({
-      origin: (origin, cb) => {
-        if (!origin) return cb(null, true);
-        const allowed = env.corsOrigin.split(",").map((s) => s.trim());
-        if (allowed.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) {
-          return cb(null, true);
-        }
-        return cb(null, false);
-      },
+      origin: true,
       credentials: true,
+      methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      optionsSuccessStatus: 204,
     }),
   );
   app.use(express.json({ limit: "4mb" }));
@@ -56,7 +55,11 @@ export function createApp() {
       uptime: process.uptime(),
       cloudinary: cloudinary.ok
         ? { connected: true, cloudName: cloudinary.cloudName }
-        : { connected: false, reason: cloudinary.reason, message: cloudinary.message },
+        : {
+            connected: false,
+            reason: cloudinary.reason,
+            message: cloudinary.message,
+          },
     });
   });
 
