@@ -7,7 +7,7 @@ import { COMPANY_DEFAULTS } from "../constants/company.js";
 export async function seedIfEmpty() {
   if ((await usersRepo.count()) === 0) {
     await usersRepo.create({
-      name: "Arjun Patel",
+      name: env.adminName,
       email: env.adminEmail,
       passwordHash: await hashPassword(env.adminPassword),
       role: "super_admin",
@@ -22,7 +22,7 @@ export async function seedIfEmpty() {
       countries: ["USA", "Nigeria", "Sri Lanka"],
       active: true,
     });
-    console.log(`Seeded Super Admin ${env.adminEmail} / ${env.adminPassword}`);
+    console.log(`Seeded Super Admin ${env.adminName} ${env.adminEmail} / ${env.adminPassword}`);
     console.log("Seeded staff employee@srihari.co / Staff@1234");
   }
 
@@ -138,6 +138,15 @@ export async function seedIfEmpty() {
       country: "India",
       is_demo: true,
     });
+  }
+
+  const admin = await usersRepo.findByEmail(env.adminEmail);
+  if (admin) {
+    const currentName = String((admin as any).name || "").trim();
+    if (currentName !== env.adminName || (admin as any).role !== "super_admin" || (admin as any).active === false) {
+      await usersRepo.save(admin, { name: env.adminName, role: "super_admin", active: true });
+      console.log(`Admin identity locked to ${env.adminName} (${env.adminEmail})`);
+    }
   }
 
   await settingsRepo.save({ ...COMPANY_DEFAULTS, ...(await settingsRepo.get()) });

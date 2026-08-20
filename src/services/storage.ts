@@ -40,6 +40,7 @@ async function saveCloudinary(buffer: Buffer, folder: string, originalName: stri
   const uploaded = await cloudinary.uploader.upload(dataUri, {
     folder: `shreehari/${folder}`,
     resource_type: mimeType.startsWith("image/") ? "image" : "auto",
+    format: mimeType.startsWith("image/") ? "jpg" : undefined,
     use_filename: true,
     unique_filename: true,
   });

@@ -1,10 +1,15 @@
 import { Router } from "express";
 import { z } from "zod";
+import { env } from "../config/env.js";
 import { ROLES } from "../lib/roles.js";
 import { authJwt, requireAdmin, requireAdminOrCeo, requirePermission, type AuthedRequest } from "../middleware/auth.js";
 import { usersRepo, hashPassword } from "../repos/users.js";
 import { fail, ok, zodErrors } from "../lib/http.js";
 import { writeAudit } from "../services/audit.js";
+
+function isPrimaryAdmin(user: any) {
+  return String(user?.email || "").toLowerCase().trim() === env.adminEmail;
+}
 
 const createSchema = z.object({
   name: z.string().min(1),
@@ -83,10 +88,18 @@ usersRouter.patch("/:id", requirePermission("users.edit"), requireAdmin, async (
   if (!user) return fail(res, 404, "Staff not found", "NOT_FOUND");
 
   const patch: Record<string, unknown> = {};
-  if (parsed.data.email) patch.email = parsed.data.email.toLowerCase().trim();
-  if (parsed.data.name) patch.name = parsed.data.name;
+  if (parsed.data.email) {
+    if (isPrimaryAdmin(user) && parsed.data.email.toLowerCase().trim() !== env.adminEmail) {
+      return fail(res, 400, "The administrator email cannot be changed", "BAD_REQUEST");
+    }
+    patch.email = parsed.data.email.toLowerCase().trim();
+  }
+  if (parsed.data.name) patch.name = isPrimaryAdmin(user) ? env.adminName : parsed.data.name;
   if (parsed.data.department !== undefined) patch.department = parsed.data.department;
   if (parsed.data.role) {
+    if (isPrimaryAdmin(user) && parsed.data.role !== "super_admin") {
+      return fail(res, 400, "Kishore Patel must remain Super Admin", "BAD_REQUEST");
+    }
     if (parsed.data.role === "super_admin" && req.user?.role !== "super_admin") {
       return fail(res, 403, "Only Super Admin can assign Super Admin", "FORBIDDEN");
     }
@@ -94,7 +107,12 @@ usersRouter.patch("/:id", requirePermission("users.edit"), requireAdmin, async (
   }
   if (parsed.data.countries) patch.countries = parsed.data.countries;
   if (parsed.data.permissions) patch.permissions = parsed.data.permissions;
-  if (typeof parsed.data.active === "boolean") patch.active = parsed.data.active;
+  if (typeof parsed.data.active === "boolean") {
+    if (isPrimaryAdmin(user) && parsed.data.active === false) {
+      return fail(res, 400, "The administrator account cannot be deactivated", "BAD_REQUEST");
+    }
+    patch.active = parsed.data.active;
+  }
   if (parsed.data.password) patch.passwordHash = await hashPassword(parsed.data.password);
 
   const saved = await usersRepo.save(user, patch);
@@ -113,6 +131,9 @@ usersRouter.patch("/:id/status", requirePermission("users.deactivate"), requireA
   if (req.params.id === req.user?.id) return fail(res, 400, "You cannot deactivate your own account", "BAD_REQUEST");
   const user = await usersRepo.findById(req.params.id);
   if (!user) return fail(res, 404, "Staff not found", "NOT_FOUND");
+  if (isPrimaryAdmin(user) && req.body?.active === false) {
+    return fail(res, 400, "The administrator account cannot be deactivated", "BAD_REQUEST");
+  }
   const active = Boolean(req.body?.active);
   const saved = await usersRepo.save(user, { active });
   await writeAudit({
@@ -139,6 +160,9 @@ usersRouter.delete("/:id", requirePermission("users.deactivate"), requireAdmin, 
   if (req.params.id === req.user?.id) return fail(res, 400, "You cannot deactivate your own account", "BAD_REQUEST");
   const user = await usersRepo.findById(req.params.id);
   if (!user) return fail(res, 404, "Staff not found", "NOT_FOUND");
+  if (isPrimaryAdmin(user)) {
+    return fail(res, 400, "The administrator account cannot be deactivated", "BAD_REQUEST");
+  }
   const saved = await usersRepo.save(user, { active: false });
   await writeAudit({
     user: req.user,

@@ -8,11 +8,18 @@ import { fail, ok } from "../lib/http.js";
 import { normalizeStatus } from "../constants/status.js";
 import { upload, assertImage } from "../middleware/upload.js";
 import { storage } from "../services/storage.js";
+import { generateExportPdf, type PdfKind } from "../services/pdf/index.js";
+import { upsertIssuedBilling } from "../services/billing.js";
 import path from "node:path";
 import fs from "node:fs";
-import { fileURLToPath } from "node:url";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+function sendStoredFile(res: any, doc: any) {
+  const url = String(doc.file_url || "");
+  if (url.startsWith("http")) return res.redirect(url);
+  const abs = storage.resolveLocal(url);
+  if (!abs || !fs.existsSync(abs)) return fail(res, 404, "File missing", "NOT_FOUND");
+  return res.download(abs, String(doc.file_name || path.basename(abs)));
+}
 
 export const dashboardRouter = Router();
 dashboardRouter.use(authJwt);
@@ -86,11 +93,7 @@ documentsPublicRouter.get("/", requirePermission("documents.view"), async (_req,
 documentsPublicRouter.get("/:id/download", requirePermission("documents.view"), async (req, res) => {
   const doc = await documentsRepo.findById(req.params.id);
   if (!doc) return fail(res, 404, "Document not found", "NOT_FOUND");
-  const url = String(doc.file_url || "");
-  if (url.startsWith("http")) return res.redirect(url);
-  const abs = storage.resolveLocal(url);
-  if (!abs || !fs.existsSync(abs)) return fail(res, 404, "File missing", "NOT_FOUND");
-  return res.download(abs, String(doc.file_name || path.basename(abs)));
+  return sendStoredFile(res, doc);
 });
 documentsPublicRouter.post("/", requirePermission("documents.upload"), upload.single("file"), async (req: AuthedRequest, res) => {
   if (!req.file) return fail(res, 400, "File is required", "VALIDATION_ERROR");
@@ -154,6 +157,57 @@ uploadsRouter.post("/image", requirePermission("documents.upload", "masters.edit
 export const billingRouter = Router();
 billingRouter.use(authJwt);
 billingRouter.get("/", requirePermission("billing.view"), async (_req, res) => ok(res, await billingRepo.list()));
+billingRouter.get("/:id/download", requirePermission("billing.view", "documents.view"), async (req: AuthedRequest, res) => {
+  const bill = await billingRepo.findById(req.params.id);
+  if (!bill) return fail(res, 404, "Billing record not found", "NOT_FOUND");
+
+  let doc = bill.document_id ? await documentsRepo.findById(String(bill.document_id)) : null;
+  if (!doc && bill.application_id) {
+    const docs = await documentsRepo.listByApplication(String(bill.application_id));
+    const kind = String(bill.document_type || "proforma");
+    doc = docs.find((d: any) => d.document_type === kind) || null;
+  }
+
+  if (!doc && bill.application_id) {
+    const app = await applicationsRepo.findById(String(bill.application_id), countryFilter(req.user!));
+    if (!app) return fail(res, 404, "Linked application not found", "NOT_FOUND");
+    const kind = (String(bill.document_type || "proforma") as PdfKind);
+    const allowed: PdfKind[] = ["invoice", "proforma", "packing_list", "annexure", "vgm", "inr_invoice"];
+    if (!allowed.includes(kind)) return fail(res, 400, "This billing record has no downloadable PDF", "BAD_REQUEST");
+    if (kind === "proforma" || kind === "invoice" || kind === "inr_invoice") {
+      const missingImg = (app.items || []).filter((it: any) => String(it.description || "").trim() && !String(it.image_url || "").trim());
+      if (missingImg.length) {
+        return fail(res, 422, "Upload a product image on every PI / invoice line item", "VALIDATION_ERROR");
+      }
+    }
+    const pdf = await generateExportPdf(app, kind);
+    const stored = await storage.save(pdf, {
+      folder: "generated",
+      originalName: `${app.invoice_no || app.proforma_no || app.app_no}-${kind}.pdf`,
+      mimeType: "application/pdf",
+    });
+    const existing = (await documentsRepo.listByApplication(String(bill.application_id))).filter((d: any) => d.document_type === kind);
+    doc = await documentsRepo.create({
+      application_id: String(bill.application_id),
+      document_type: kind,
+      file_name: stored.fileName,
+      file_url: stored.url,
+      mime_type: "application/pdf",
+      file_size: stored.fileSize,
+      uploaded_by: req.user!.id,
+      uploaded_by_name: req.user!.name,
+      version: existing.length + 1,
+      status: "generated",
+      storage: stored.storage,
+      public_id: stored.publicId,
+    });
+    await billingRepo.update(bill.id, { document_id: doc.id, status: "ISSUED" });
+    await upsertIssuedBilling({ application: app, kind, documentId: doc.id, userId: req.user!.id });
+  }
+
+  if (!doc) return fail(res, 404, "No PDF for this bill yet. Generate it from the application screen.", "NOT_FOUND");
+  return sendStoredFile(res, doc);
+});
 billingRouter.post("/", requirePermission("billing.create"), async (req: AuthedRequest, res) => {
   const billing_no = await numbering.billing();
   const row = await billingRepo.create({

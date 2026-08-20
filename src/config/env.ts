@@ -21,6 +21,7 @@ export const env = {
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:8080",
   adminEmail: (process.env.ADMIN_EMAIL || "admin@srihari.co").toLowerCase(),
   adminPassword: process.env.ADMIN_PASSWORD || "Admin@1234",
+  adminName: (process.env.ADMIN_NAME || "Kishore Patel").trim() || "Kishore Patel",
   maxUploadMb: Number(process.env.MAX_UPLOAD_MB || 10),
   cloudinary: {
     cloudName: (process.env.CLOUDINARY_CLOUD_NAME || "").trim(),

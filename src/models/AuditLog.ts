@@ -88,6 +88,7 @@ const billingSchema = new Schema(
     tax: Number,
     status: { type: String, default: "DRAFT" },
     document_type: { type: String, default: "proforma" },
+    document_id: String,
     created_by: String,
     approved_by: String,
     generated_at: Date,

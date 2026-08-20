@@ -1,4 +1,4 @@
-import { collectPdf, companyProfile, drawLetterhead, drawSeal, box, kv, loadImageBuffer, moneyWords, newDoc, COLORS, attachFooter } from "./common.js";
+﻿import { collectPdf, companyProfile, drawLetterhead, drawSeal, box, kv, loadImageBuffer, moneyWords, newDoc, COLORS, stampFooters, contentBottom } from "./common.js";
 import { COMPANY_DEFAULTS } from "../../constants/company.js";
 import { destIsNepalBhutan, formatInr, indianMoneyWords } from "../../lib/export-rules.js";
 
@@ -8,7 +8,7 @@ function titleFor(kind: PdfKind) {
   if (kind === "proforma") return "PROFORMA INVOICE";
   if (kind === "packing_list") return "PACKING LIST";
   if (kind === "annexure") return "ANNEXURE";
-  if (kind === "vgm") return "ANNEXURE – 1  (VGM)";
+  if (kind === "vgm") return "ANNEXURE - 1  (VGM)";
   if (kind === "inr_invoice") return "INR INVOICE";
   return "COMMERCIAL INVOICE";
 }
@@ -34,8 +34,14 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
   const isInr = kind === "inr_invoice";
   const isPack = kind === "packing_list";
   const currency = isInr ? "INR" : app.invoice_currency || "USD";
+  const limit = () => contentBottom(doc);
+  const ensure = (need: number) => {
+    if (y + need > limit()) {
+      doc.addPage();
+      y = 36;
+    }
+  };
   let y = await drawLetterhead(doc, company, app.final_destination_text);
-  attachFooter(doc, app.final_destination_text);
 
   doc.rect(m, y, inner, 16).fillAndStroke(COLORS.fill, COLORS.navy);
   doc.fillColor(COLORS.navy).font("Helvetica-Bold").fontSize(12).text(titleFor(kind), m, y + 3, { width: inner, align: "center" });
@@ -46,7 +52,7 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
   }
 
   const half = inner / 2;
-  const blockH = 70;
+  const blockH = 88;
   box(doc, m, y, half, blockH, COLORS.fill);
   box(doc, m + half, y, half, blockH);
   doc.font("Helvetica-Bold").fontSize(8).fillColor("#111").text("Exporter:-", m + 4, y + 3);
@@ -55,15 +61,11 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
   wrap(doc, app.exporter_address || String(company.exporterAddress || ""), m + 4, y + 26, half - 8, 7.5);
   const invNo = kind === "proforma" ? app.proforma_no : isInr ? app.inr_invoice_no : app.invoice_no;
   const invDate = kind === "proforma" ? app.proforma_date : isInr ? app.inr_invoice_date : app.invoice_date;
-  kv(doc, m + half + 4, y + 14, kind === "proforma" ? "PI No" : isInr ? "INR Inv" : "Invoice No", invNo || "");
+  kv(doc, m + half + 4, y + 14, kind === "proforma" ? "PI / Invoice No" : isInr ? "INR Inv" : "Invoice No", invNo || "");
   kv(doc, m + half + 4, y + 26, "Date", invDate || "");
   kv(doc, m + half + 4, y + 38, "IEC No", app.iec_no || String(company.iec || ""));
-  if (kind === "proforma") {
-    kv(doc, m + half + 4, y + 50, "AEO No", app.aeo_no || String(company.aeo || ""));
-  } else {
-    kv(doc, m + half + 4, y + 50, "GST No", app.gst_no || String(company.gstin || ""));
-    kv(doc, m + half + 4, y + 62, "AEO No", app.aeo_no || String(company.aeo || ""));
-  }
+  kv(doc, m + half + 4, y + 50, "GST No", app.gst_no || String(company.gstin || ""));
+  kv(doc, m + half + 4, y + 62, "AEO No", app.aeo_no || String(company.aeo || ""));
   y += blockH;
 
   const consH = 78;
@@ -78,7 +80,7 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
     wrap(doc, notify, m + half + 4, y + 14, half - 8, 8);
   } else {
     doc.font("Helvetica-Bold").fontSize(8).text(app.bank_name || "", m + half + 4, y + 14, { width: half - 8 });
-    wrap(doc, `A/C NO: ${app.bank_account || ""}\nSWIFT: ${app.bank_swift || ""}\nIFSC: ${app.bank_ifsc || ""}\n${notify}`, m + half + 4, y + 26, half - 8, 7);
+    wrap(doc, `A/C NO: ${app.bank_account || ""}\nSWIFT: ${app.bank_swift || ""}\nIFSC: ${app.bank_ifsc || ""}\n${app.bank_branch || ""}\n${notify}`, m + half + 4, y + 26, half - 8, 7);
   }
   y += consH;
 
@@ -126,35 +128,51 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
   y += bandH;
 
   const containers = app.containers?.length ? app.containers : [{}];
-  box(doc, m, y, inner, 12 + containers.length * 14);
-  doc.font("Helvetica-Bold").fontSize(7).text("Container No.", m + 4, y + 3);
-  doc.text("Line Seal No.", m + 130, y + 3);
-  doc.text("Electronic Seal No.", m + 250, y + 3);
-  doc.text("Container Quantity", m + 400, y + 3);
-  containers.forEach((c: any, i: number) => {
-    const yy = y + 14 + i * 14;
-    doc.font("Helvetica").fontSize(8).text(c.container_no || "", m + 4, yy);
-    doc.text(c.line_seal_no || "", m + 130, yy);
-    doc.text(c.electronic_seal_no || "", m + 250, yy);
-    doc.text(c.quantity || c.size || "", m + 400, yy);
+  const cHead = 14;
+  const cRow = 16;
+  const cH = cHead + containers.length * cRow;
+  box(doc, m, y, inner, cH);
+  const cCols = [inner * 0.28, inner * 0.24, inner * 0.28, inner * 0.2];
+  let cx0 = m;
+  for (let i = 1; i < 4; i++) {
+    cx0 += cCols[i - 1];
+    doc.moveTo(cx0, y).lineTo(cx0, y + cH).stroke();
+  }
+  doc.moveTo(m, y + cHead).lineTo(m + inner, y + cHead).stroke();
+  const cLabels = ["Container No.", "Line Seal No.", "Electronics Seal No.", "Container Quantity"];
+  cx0 = m;
+  cLabels.forEach((lab, i) => {
+    doc.font("Helvetica-Bold").fontSize(7).text(lab, cx0 + 3, y + 3, { width: cCols[i] - 6 });
+    cx0 += cCols[i];
   });
-  y += 14 + containers.length * 14;
+  containers.forEach((c: any, i: number) => {
+    const yy = y + cHead + i * cRow + 3;
+    const vals = [c.container_no || "", c.line_seal_no || "", c.electronic_seal_no || "", c.quantity || c.size || ""];
+    let vx = m;
+    vals.forEach((val, ci) => {
+      doc.font("Helvetica").fontSize(8).text(String(val), vx + 3, yy, { width: cCols[ci] - 6 });
+      vx += cCols[ci];
+    });
+  });
+  y += cH;
 
   const items = app.items ?? [];
-  const rateLabel = isInr ? "Rate (INR)" : `Rate (${currency})`;
   const headers = isPack
-    ? ["Pkgs", "Description of Goods", "Qty", "Unit", "Net Kg", "Gross Kg"]
-    : ["Pkgs", "Description of Goods", "Qty", "Unit", rateLabel, "Amount"];
-  const widths = isPack ? [40, 250, 50, 40, 70, 70] : [40, 230, 50, 40, 70, 90];
-  box(doc, m, y, inner, 14);
-  doc.rect(m, y, inner, 14).fillAndStroke(COLORS.fill, COLORS.line);
+    ? ["No & Kind of Packages", "Description of Goods", "Qty", "SET/PCS", "Net Kg", "Gross Kg"]
+    : ["No & Kind of Packages", "Description of Goods", "Quantity", "SET/PCS", "RATE", "Amount"];
+  const widths = isPack
+    ? [95, inner - 95 - 48 - 48 - 55 - 55, 48, 48, 55, 55]
+    : [95, inner - 95 - 52 - 48 - 52 - 72, 52, 48, 52, 72];
+  box(doc, m, y, inner, 16);
+  doc.rect(m, y, inner, 16).fillAndStroke(COLORS.fill, COLORS.line);
   let x = m;
-  doc.font("Helvetica-Bold").fontSize(7).fillColor("#111");
+  doc.font("Helvetica-Bold").fontSize(6.5).fillColor("#111");
   headers.forEach((h, i) => {
-    doc.text(h, x + 2, y + 3, { width: widths[i] - 4 });
+    if (i > 0) doc.moveTo(x, y).lineTo(x, y + 16).stroke();
+    doc.text(h, x + 2, y + 4, { width: widths[i] - 4, align: "center" });
     x += widths[i];
   });
-  y += 14;
+  y += 16;
 
   const extras = (Number(app.loading_charge) || 0) + (nepal ? (Number(app.price_increase) || 0) + (Number(app.freight) || 0) : 0);
   const goods = items.reduce((s: number, it: any) => s + (Number(it.amount) || 0), 0);
@@ -165,32 +183,36 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
   const rate = Number(app.exchange_rate) || 0;
 
   for (const it of items) {
-    const desc = [it.brand_name && `Brand: ${it.brand_name}`, it.description, it.dimensions].filter(Boolean).join("\n");
+    const descLines = [app.products_desc && String(app.products_desc).toUpperCase(), it.description, it.brand_name && `Brand: ${it.brand_name}`, it.dimensions].filter(Boolean);
+    const desc = descLines.join("\n");
     const img = await loadImageBuffer(it.image_url);
-    const rowH = img ? 42 : Math.max(16, doc.heightOfString(desc, { width: widths[1] - 40 }) + 6);
-    if (y + rowH > 720) {
-      doc.addPage();
-      y = 40;
-    }
+    const rowH = img ? 86 : Math.max(22, doc.heightOfString(desc, { width: widths[1] - 8 }) + 8);
+    ensure(rowH);
     box(doc, m, y, inner, rowH);
     let cx = m;
+    for (let i = 1; i < widths.length; i++) {
+      cx += widths[i - 1];
+      doc.moveTo(cx, y).lineTo(cx, y + rowH).stroke();
+    }
     const amt = isInr && rate ? Number(((Number(it.amount) || 0) * rate).toFixed(2)) : it.amount;
     const lineRate = isInr && rate ? Number(((Number(it.rate) || 0) * rate).toFixed(2)) : it.rate;
-    const cells = isPack
-      ? [it.packages, desc, it.quantity, it.unit, it.net_weight, it.gross_weight]
-      : [it.packages, desc, it.quantity, it.unit, lineRate, amt];
-    cells.forEach((val, i) => {
-      if (i === 1 && img) {
-        try {
-          doc.image(img, cx + 2, y + 3, { width: 34, height: rowH - 6, fit: [34, rowH - 6] });
-        } catch {
-          /* ignore */
-        }
-        doc.font("Helvetica").fontSize(8).text(String(val ?? ""), cx + 38, y + 3, { width: widths[i] - 42 });
-      } else {
-        doc.font("Helvetica").fontSize(8).text(String(val ?? ""), cx + 2, y + 3, { width: widths[i] - 4 });
+    if (img) {
+      try {
+        doc.image(img, m + (widths[0] - 70) / 2, y + 3, { fit: [70, 80] });
+      } catch {
+        /* ignore */
       }
-      cx += widths[i];
+    }
+    doc.font("Helvetica").fontSize(7).text(String(it.packages ?? ""), m + 2, y + rowH - 12, { width: widths[0] - 4, align: "center" });
+    doc.font("Helvetica-Bold").fontSize(8).text(String(app.products_desc || "").toUpperCase(), m + widths[0] + 4, y + 8, { width: widths[1] - 8, align: "center" });
+    doc.font("Helvetica").fontSize(8).text(String(it.description || ""), m + widths[0] + 4, y + 22, { width: widths[1] - 8, align: "center" });
+    const nums = isPack
+      ? [it.quantity, it.unit, it.net_weight, it.gross_weight]
+      : [it.quantity, it.unit, lineRate, amt];
+    cx = m + widths[0] + widths[1];
+    nums.forEach((val, i) => {
+      doc.font("Helvetica").fontSize(8).text(String(val ?? ""), cx + 2, y + rowH / 2 - 4, { width: widths[i + 2] - 4, align: "center" });
+      cx += widths[i + 2];
     });
     y += rowH;
   }
@@ -201,29 +223,34 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
   if (!isPack && nepal && app.freight) extraLines.push(["FREIGHT", Number(app.freight)]);
   for (const [label, val] of extraLines) {
     const shown = isInr && rate ? val * rate : val;
+    ensure(16);
     box(doc, m, y, inner, 14);
-    doc.font("Helvetica").fontSize(8).text(label, m + 44, y + 3);
+    doc.font("Helvetica").fontSize(8).text(label, m + widths[0] + 4, y + 3);
     doc.text(isInr ? formatInr(shown) : String(shown), m + inner - 110, y + 3, { width: 100, align: "right" });
     y += 14;
   }
 
-  box(doc, m, y, inner, 16);
-  doc.font("Helvetica-Bold").fontSize(8).text(`TOTAL  ${totalPkgs || ""}`, m + 4, y + 4);
+  ensure(28);
+  box(doc, m, y, inner, 22);
+  doc.font("Helvetica-Bold").fontSize(8);
   if (isPack) {
-    doc.text(String(totalNet || app.total_net_weight || ""), m + 380, y + 4, { width: 70 });
-    doc.text(String(totalGross || app.total_gross_weight || ""), m + 450, y + 4, { width: 70 });
+    doc.text(`TOTAL SET: ${totalPkgs || ""}`, m + 4, y + 6);
+    doc.text(String(totalNet || app.total_net_weight || ""), m + 380, y + 6, { width: 70 });
+    doc.text(String(totalGross || app.total_gross_weight || ""), m + 450, y + 6, { width: 70 });
   } else {
     const words = isInr ? (app.amount_in_words || indianMoneyWords(totalAmt)) : (app.amount_in_words || moneyWords(totalAmt, currency));
-    doc.text(words, m + 90, y + 4, { width: 300 });
-    doc.text(isInr ? formatInr(totalAmt) : `${currency} ${Number(totalAmt).toFixed(2)}`, m + inner - 110, y + 4, { width: 100, align: "right" });
+    doc.text(words || `TOTAL SET: ${totalPkgs || ""}`, m + 4, y + 6, { width: inner - 160 });
+    const totalLabel = isInr ? `Total (in INR) ${formatInr(totalAmt)}` : `Total (in ${currency}) $ ${Number(totalAmt).toFixed(0)}`;
+    doc.text(totalLabel, m + inner - 150, y + 6, { width: 146, align: "right" });
   }
-  y += 22;
+  y += 26;
   if (!isPack && !isInr && rate) {
     doc.font("Helvetica").fontSize(7.5).text(`USD/INR week rate: ${rate}    INR equivalent: ${formatInr(Number(app.inr_amount || totalAmt * rate))}`, m, y);
     y += 12;
   }
 
   if (kind === "packing_list" && (app.packing_lines || []).length) {
+    ensure(40);
     doc.font("Helvetica-Bold").fontSize(9).text("Per-piece packing breakdown", m, y);
     y += 12;
     const ph = ["Sr", "Description", "PCS", "Net/pc", "Gross/pc", "Net Kg", "Gross Kg"];
@@ -237,6 +264,7 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
     });
     y += 12;
     for (const pl of app.packing_lines) {
+      ensure(14);
       box(doc, m, y, inner, 12);
       px = m;
       [pl.serial_no, pl.description, pl.pcs, pl.per_pcs_net, pl.per_pcs_gross, pl.net_weight, pl.gross_weight].forEach((val, i) => {
@@ -248,17 +276,21 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
     y += 8;
   }
 
+  ensure(40);
   wrap(doc, app.rodtep_text || COMPANY_DEFAULTS.rodtepText, m, y, inner, 7);
   y += 12;
   if (!nepal && !isInr) {
     wrap(doc, app.igst_bond_text || COMPANY_DEFAULTS.igstBondText, m, y, inner, 7);
     y += 14;
   }
+  ensure(40);
   doc.font("Helvetica").fontSize(8).text(`LUT NO : ${app.lut_no || company.lutNo || ""}`, m, y);
   doc.text(`State of Origin ${app.state_of_origin || "GUJARAT"}`, m, y + 12);
   doc.text(`AEO : ${app.aeo_no || company.aeo || ""}`, m, y + 24);
+  y += 40;
 
-  const declY = y + 40;
+  ensure(90);
+  const declY = y;
   box(doc, m, declY, half, 70);
   box(doc, m + half, declY, half, 70);
   doc.font("Helvetica-Bold").fontSize(8).text("Declaration", m + 4, declY + 4);
@@ -266,6 +298,7 @@ async function generateInvoiceLike(app: any, kind: PdfKind) {
   await drawSeal(doc, m + half + 40, declY + 6, 120);
   doc.font("Helvetica-Bold").fontSize(8).fillColor(COLORS.blue).text("AUTHORISED SIGNATORY", m + half + 8, declY + 56);
 
+  await stampFooters(doc);
   doc.end();
   return done;
 }
@@ -275,8 +308,13 @@ async function generateAnnexure(app: any) {
   const doc = newDoc();
   const done = collectPdf(doc);
   const m = 28;
+  const ensure = (need: number) => {
+    if (y + need > contentBottom(doc)) {
+      doc.addPage();
+      y = 36;
+    }
+  };
   let y = await drawLetterhead(doc, company, app.final_destination_text);
-  attachFooter(doc, app.final_destination_text);
   doc.font("Helvetica-Bold").fontSize(13).fillColor(COLORS.navy).text("ANNEXURE", m, y, { width: 540, align: "center" });
   y += 16;
   doc.font("Helvetica-Bold").fontSize(9).fillColor("#111").text("OFFICE OF THE SUPERINTENDENT OF CGST", m, y, { align: "center", width: 540 });
@@ -312,31 +350,40 @@ async function generateAnnexure(app: any) {
     ["14. AEO No", app.aeo_no || String(company.aeo || "")],
   ];
   for (const [k, v] of rows) {
+    const text = v || "-";
+    const h = Math.max(16, doc.heightOfString(String(text), { width: 300 }) + 6);
+    ensure(h);
     doc.font("Helvetica-Bold").fontSize(8).text(k, m, y, { width: 220 });
-    doc.font("Helvetica").text(v || "—", m + 230, y, { width: 300 });
-    y += Math.max(16, doc.heightOfString(String(v || "—"), { width: 300 }) + 6);
+    doc.font("Helvetica").text(text, m + 230, y, { width: 300 });
+    y += h;
   }
 
   y += 6;
+  ensure(14);
   doc.font("Helvetica-Bold").fontSize(8).text("CONTAINER NO.        SIZE        PACKAGES        SEAL NO.        ELECTRONIC SEAL NO.", m, y);
   y += 12;
   for (const c of app.containers || []) {
+    ensure(12);
     doc.font("Helvetica").fontSize(8).text(`${c.container_no || ""}    ${c.size || ""}    ${c.packages || pkgs || ""}    ${c.line_seal_no || ""}    ${c.electronic_seal_no || ""}`, m, y);
     y += 12;
   }
   y += 8;
+  ensure(14);
   doc.font("Helvetica-Bold").text("15. GOODS PURCHASE BILL DETAILS", m, y);
   y += 12;
   for (const b of app.gst_bills || []) {
+    ensure(12);
     doc.font("Helvetica").text(`${b.bill_no || ""}  ${b.bill_date || ""}  ${b.company_name || ""}  GST: ${b.gst_no || ""}`, m, y);
     y += 12;
   }
   y += 16;
+  ensure(90);
   await drawSeal(doc, m + 320, y, 140);
   doc.font("Helvetica").fontSize(8).text("SIGNATURE OF THE EXPORTER", m, y);
   doc.text(`NAME : ${company.authorisedSignatory || "KISHORBHAI"} (${exporterName})`, m, y + 50);
   doc.text("DESIGNATION :- Authorised", m, y + 64);
 
+  await stampFooters(doc);
   doc.end();
   return done;
 }
@@ -346,11 +393,16 @@ async function generateVgm(app: any, containerIndex = 0) {
   const doc = newDoc();
   const done = collectPdf(doc);
   const m = 40;
+  const ensure = (need: number) => {
+    if (y + need > contentBottom(doc)) {
+      doc.addPage();
+      y = 36;
+    }
+  };
   let y = await drawLetterhead(doc, company, app.final_destination_text);
-  attachFooter(doc, app.final_destination_text);
   const list = app.containers?.length ? app.containers : [{}];
   const c0 = list[containerIndex] || list[0] || {};
-  doc.font("Helvetica-Bold").fontSize(13).fillColor(COLORS.navy).text("ANNEXURE – 1", m, y, { align: "center", width: 515 });
+  doc.font("Helvetica-Bold").fontSize(13).fillColor(COLORS.navy).text("ANNEXURE - 1", m, y, { align: "center", width: 515 });
   y += 16;
   doc.font("Helvetica-Bold").fontSize(10).text("INFORMATION ABOUT VERIFIED GROSS MASS OF CONTAINER", m, y, { align: "center", width: 515 });
   y += 12;
@@ -375,6 +427,7 @@ async function generateVgm(app: any, containerIndex = 0) {
     ["11", "DOE / VGM date", doe],
   ];
   for (const [n, k, v] of rows) {
+    ensure(28);
     box(doc, m, y, 30, 28);
     box(doc, m + 30, y, 250, 28);
     box(doc, m + 280, y, 235, 28);
@@ -384,10 +437,12 @@ async function generateVgm(app: any, containerIndex = 0) {
     y += 28;
   }
   y += 20;
+  ensure(110);
   doc.font("Helvetica").fontSize(8).text("Signature of Authorized Person of Shipper", m + 280, y);
   await drawSeal(doc, m + 300, y + 10, 130);
   doc.text(`Name- ${company.vgmOfficial || "Mr. KISHORBHAI"}`, m + 280, y + 80);
   doc.text(`DATE  ${doe}`, m, y + 80);
+  await stampFooters(doc);
   doc.end();
   return done;
 }

@@ -9,11 +9,11 @@ async function resetAdmin() {
   const existing = await usersRepo.findByEmail(email);
 
   if (existing) {
-    await usersRepo.save(existing, { passwordHash, active: true, role: "super_admin" as const });
-    console.log(`Reset password for existing admin ${email}`);
+    await usersRepo.save(existing, { name: env.adminName, passwordHash, active: true, role: "super_admin" as const });
+    console.log(`Reset password for existing admin ${env.adminName} <${email}>`);
   } else {
     await usersRepo.create({
-      name: "Arjun Patel",
+      name: env.adminName,
       email,
       passwordHash,
       role: "super_admin",

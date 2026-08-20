@@ -28,11 +28,11 @@ export const upload = multer({
   },
 });
 
-export const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
+export const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png"]);
 
 export function assertImage(file: Express.Multer.File) {
   const ext = path.extname(file.originalname).toLowerCase();
-  if (!IMAGE_EXT.has(ext)) {
-    throw new HttpError(400, "Only JPG, PNG or WEBP images are allowed", "BAD_REQUEST");
+  if (!IMAGE_EXT.has(ext) && file.mimetype !== "image/jpeg" && file.mimetype !== "image/png") {
+    throw new HttpError(400, "Only JPG or PNG images are allowed", "BAD_REQUEST");
   }
 }

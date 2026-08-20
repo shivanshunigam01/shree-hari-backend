@@ -13,6 +13,7 @@ import { numbering } from "../services/numbering.js";
 import { destIsNepalBhutan, fxAmountsMatch, sealsVerified } from "../lib/export-rules.js";
 import { writeAudit } from "../services/audit.js";
 import { usersRepo } from "../repos/users.js";
+import { upsertIssuedBilling } from "../services/billing.js";
 
 export const applicationsRouter = Router();
 applicationsRouter.use(authJwt);
@@ -310,6 +311,12 @@ applicationsRouter.post("/:id/documents/generate", requirePermission("documents.
     status: "generated",
     storage: stored.storage,
     public_id: stored.publicId,
+  });
+  await upsertIssuedBilling({
+    application: app,
+    kind,
+    documentId: row.id,
+    userId: req.user!.id,
   });
   return ok(res, row, "Document generated", 201);
 });

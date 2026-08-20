@@ -122,6 +122,14 @@ export const billingRepo = {
     }
     return serializeRow(jsonDb.findById("billing", id));
   },
+  async findOne(query: Record<string, unknown>) {
+    if (dbMode === "mongo") {
+      const row = await BillingRecord.findOne(query);
+      return row ? serialize(row) : null;
+    }
+    const row = jsonDb.findOne("billing", query);
+    return row ? serializeRow(row) : null;
+  },
   async update(id: string, patch: Record<string, unknown>) {
     if (dbMode === "mongo") {
       const row = await BillingRecord.findByIdAndUpdate(id, patch, { new: true });

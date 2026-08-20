@@ -1,7 +1,7 @@
 import { dbMode } from "../config/db.js";
 import { Application, DEFAULT_STAGES } from "../models/Application.js";
 import { jsonDb, serializeRow } from "../db/json.js";
-import { serialize, serializeMany } from "../lib/serialize.js";
+import { serialize } from "../lib/serialize.js";
 import { randomUUID } from "node:crypto";
 
 function flattenMongo(doc: any) {
@@ -62,12 +62,12 @@ export const applicationsRepo = {
     const skip = opts?.skip ?? 0;
     const limit = opts?.limit ?? 50;
     if (dbMode === "mongo") {
-      const q = Application.find({ deleted_at: { $in: [null, undefined] }, ...filter }).sort(opts?.sort || { created_at: -1 });
+      const mongoFilter = { deleted_at: { $in: [null, undefined] }, ...filter };
       const [items, total] = await Promise.all([
-        q.skip(skip).limit(limit),
-        Application.countDocuments({ deleted_at: { $in: [null, undefined] }, ...filter }),
+        Application.find(mongoFilter).sort(opts?.sort || { created_at: -1 }).skip(skip).limit(limit),
+        Application.countDocuments(mongoFilter),
       ]);
-      return { items: serializeMany(items), total };
+      return { items: items.map(flattenMongo), total };
     }
     let rows = jsonDb.find("applications").filter((a) => !a.deleted_at && matchesCountry(a, filter) && matchesQuery(a, filter));
     rows.sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
